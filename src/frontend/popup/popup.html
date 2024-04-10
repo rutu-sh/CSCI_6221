@@ -87,7 +87,7 @@
 
     <!-- Plus Button to add a new subscription -->
     <div class="btn-container">
-      <button class="plus-button" id="add-subscription-btn">+</button>
+      <button class="plus-button" id="add-subscription-btn">Add New Subscription</button>
     </div>
 
   </div>
@@ -278,68 +278,64 @@
       document.getElementById('add-subscription-form').style.display = 'block';
     });
 
-    // get subscriptions
     function getSubscriptions(username) {
-      fetch(`https://7se83qeyid.execute-api.us-east-1.amazonaws.com/dev/subscriptions/list/${username}`)
-        .then(response => response.json())
-        .then(data => {
-          // Clear any existing subscription cards
-          const subscriptionCards = document.getElementById('subscription-cards');
-          subscriptionCards.innerHTML = '';
+  fetch(`https://7se83qeyid.execute-api.us-east-1.amazonaws.com/dev/subscriptions/list/${username}`)
+    .then(response => response.json())
+    .then(data => {
+      // Clear any existing subscription cards
+      const subscriptionCards = document.getElementById('subscription-cards');
+      subscriptionCards.innerHTML = '';
 
-          // console.log(data)
-          const jsonData = JSON.parse(data);
+      const jsonData = JSON.parse(data);
+      subscriptions = jsonData.subscriptions;
 
-          subscriptions = jsonData.subscriptions;
+      console.log('Subscriptions:', jsonData.subscriptions);
 
-          console.log('Subscriptions:', jsonData.subscriptions);
+      // Loop through the subscription data and create cards
+      jsonData.subscriptions.forEach(subscription => {
+        const card = document.createElement('div');
+        card.classList.add('subscription-card');
 
-          // Loop through the subscription data and create cards
-          jsonData.subscriptions.forEach(subscription => {
-            const card = document.createElement('div');
-            card.classList.add('subscription-card');
+        // Create elements for displaying subscription details
+        const vendorNameElement = document.createElement('p');
+        vendorNameElement.textContent = `Vendor Name: ${subscription.vendor_name}`;
+        card.appendChild(vendorNameElement);
 
-            // Create elements for displaying subscription details
-            const vendorNameElement = document.createElement('p');
-            vendorNameElement.textContent = `Vendor Name: ${subscription.vendor_name}`;
-            card.appendChild(vendorNameElement);
+        const vendorURLElement = document.createElement('a');
+        vendorURLElement.textContent = `Vendor URL: ${subscription.vendor_url}`;
+        vendorURLElement.href = subscription.vendor_url;  
+        vendorURLElement.target = '_blank';  
+        vendorURLElement.style.textDecoration = 'none';
+        card.appendChild(vendorURLElement);
 
-            const vendorURLElement = document.createElement('a');
-            vendorURLElement.textContent = `Vendor URL: ${subscription.vendor_url}`;
-            vendorURLElement.href = subscription.vendor_url;  // Set the href attribute
-            vendorURLElement.target = '_blank';  // Open the link in a new tab
-            vendorURLElement.style.textDecoration = 'none';
-            card.appendChild(vendorURLElement);
+        const durationElement = document.createElement('p');
+        durationElement.textContent = `Subscription Duration: ${subscription.duration} days`;
+        card.appendChild(durationElement);
 
-            const durationElement = document.createElement('p');
-            durationElement.textContent = `Subscription Duration: ${subscription.duration} days`;
-            card.appendChild(durationElement);
+        const updateButton = document.createElement('button');
+        updateButton.classList.add('update-btn');
+        updateButton.textContent = 'Update';
+        updateButton.dataset.uuid = subscription.uuid;
+        console.log('Subscription ID:', subscription.uuid);
+        card.appendChild(updateButton);
 
-            // Create update button
-            const updateButton = document.createElement('button');
-            updateButton.classList.add('update-btn');
-            updateButton.textContent = 'Update';
-            updateButton.dataset.uuid = subscription.uuid;
-            console.log('Subscription ID:', subscription.uuid);
-            card.appendChild(updateButton);
+        const deleteButton = document.createElement('button');
+        deleteButton.classList.add('delete-btn');
+        deleteButton.textContent = 'Delete';
+        deleteButton.dataset.uuid = subscription.uuid;
+        card.appendChild(deleteButton);
 
-            // Create update button
-            const deleteButton = document.createElement('button');
-            deleteButton.classList.add('delete-btn');
-            deleteButton.textContent = 'Delete';
-            deleteButton.dataset.uuid = subscription.uuid;
-            card.appendChild(deleteButton);
+        subscriptionCards.appendChild(card);
+      });
 
-            subscriptionCards.appendChild(card);
-          });
+      // Show the subscription cards section
+      subscriptionCards.style.display = 'block';
+    })
+    .catch(error => {
+      console.error('Error fetching subscriptions:', error);
+    });
+}
 
-          // Show the subscription cards section
-          subscriptionCards.style.display = 'block';
-        })
-        .catch(error => {
-          console.error('Error fetching subscriptions:', error);
-        });
-    }
 
     // Handle forgot password link click
     document.querySelector('#login-section a[href="#forgot-password-section"]').addEventListener('click', function (event) {

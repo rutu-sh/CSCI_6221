@@ -48,21 +48,24 @@ h3{
 }
 
 .plus-button {
-    margin-top: 20px;
-    width: 120px;
-    height: 40px;
-    background-color: rgb(0, 177, 118);
-    color: white;
-    font-weight: bold;
-    border: none;
-    cursor: pointer;
-    border-radius: 5px;
+  margin-top: -80px;
+  margin-left: -100vw;
+  width: 20vw !important;
+  height: 40px !important;
+  background-color: rgb(0, 177, 118);
+  color: white;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-bottom: 20px; /* Adjust margin for proper spacing */
 }
 
 .btn-container {
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-top: 30px !important;
 }
 
 .input-field {
@@ -223,27 +226,78 @@ ul {
 }
 
 
-/* CSS for subscription cards */
+/* Style for subscription cards */
 .subscription-card {
-  flex: 0 0 calc(50% - 20px); /* Two cards in each row */
-  margin: 10px auto; /* Center the cards horizontally */
-  max-width: 1000px; /* Set a maximum width for the cards */
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  padding: 10px;
-  background-color: #b9b9b9;
-  color: black;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-bottom: 20px;
+  width: calc(50% - 20px); /* Adjust width to fit two cards per row with some spacing */
+  margin-right: 20px;
+  float: left; /* Float cards left to achieve the inline layout */
+  box-sizing: border-box; /* Ensure padding is included in the width */
+}
+
+.subscription-card:nth-child(2n) {
+  margin-right: 0; /* Remove margin for every second card to align properly */
 }
 
 .subscription-card p {
-  margin: 5px 0;
+  margin: 0;
+  font-size: 16px;
+  color: #333333;
 }
 
-/* Optional: Add hover effect */
-.subscription-card:hover {
-  cursor: pointer;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+.subscription-card a {
+  color: #007bff;
+  text-decoration: none;
 }
+
+.subscription-card a:hover {
+  text-decoration: underline;
+}
+
+.subscription-card button {
+  background-color: #00a331;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  cursor: pointer;
+  margin-top: 10px;
+  display: block; /* Ensure buttons are displayed as block elements */
+  width: 100%; /* Make buttons fill the width of the card */
+}
+
+.subscription-card button:hover {
+  background-color: #008b2a;
+}
+
+/* Style for the "+" button */
+.add-button {
+  clear: both; /* Ensure the button is displayed below the subscription cards */
+  margin-top: 20px;
+  text-align: center;
+}
+
+.add-button button {
+  background-color: #007bff;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
+.add-button button:hover {
+  background-color: #0056b3;
+}
+
+
+
+
+
 
 #verification-code-section {
   width: 300px;
@@ -311,29 +365,43 @@ ul {
   margin-left: 50px;
 }
 
+/* Styling for the update button */
 .update-btn {
-  background-color: #007bff;
-  color: #fff;
+  background-color: #4caf50 !important; /* Green */
   border: none;
-  border-radius: 5px;
-  padding: 5px 10px;
+  color: white !important;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
   cursor: pointer;
+  border-radius: 4px;
+  width: 10vw !important;
 }
 
 .update-btn:hover {
-  background-color: #0056b3;
+  background-color: #45a049 !important; /* Darker green */
 }
 
+/* Styling for the delete button */
 .delete-btn {
-  background-color: #ae0000;
-  color: #fff;
+  background-color: #f44336 !important; /* Red */
   border: none;
-  border-radius: 5px;
-  padding: 5px 10px;
+  color: white !important;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
   cursor: pointer;
-  margin-left: 20px;
+  border-radius: 4px;
+  width: 10vw !important;
 }
 
 .delete-btn:hover {
-  background-color: #da0000;
+  background-color: #d32f2f !important; /* Darker red */
 }
+
