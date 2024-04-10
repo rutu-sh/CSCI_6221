@@ -1,4 +1,4 @@
-# CSCI_6221 - GoLang Group
+# ![Go](./assets/go.png) CSCI_6221 - GoLang Group 
 
 ### Members
 
@@ -15,9 +15,15 @@
 
 The basic idea of this project is to create a service for managing user subscriptions and providing alerts based on when the subscription is nearing it's end so that the user can make a decision on continuing/discontinuing the subscription. 
 
+This project compromises of the following components (written in Go):
+
+1. **Authentication**: This component is used for authenticating and managing the users. 
+2. **Subscription Management**: This component is used for managing the subscriptions of the users.
+3. **Alerting**: This component is used for sending alerts to the users when their subscriptions are nearing their end.
+
 ## Language of choice 
 
-We have used the Go Programming Language for writing the backend for this project. 
+We have used the [Go Programming Language](https://go.dev/) for writing the backend for this project. 
 
 ## Architecture
 
@@ -61,3 +67,6 @@ We have used AWS Lambda and EventBridge for sending alerts to the users. The flo
 3. The Alerting Lambda function interacts with DynamoDB to get the list of subscriptions that are nearing their end
 4. The Alerting Lambda function sends an email to the users with the list of subscriptions that are nearing their end
 
+![Subscription Alerter](./assets/subscription-sns-alerter.drawio.png)
+
+The main component of this flow is the Alerting Lambda function. This function is responsible for interacting with DynamoDB to get the list of subscriptions that are nearing their end and sending an email to the users. This function is written in **Go**. It uses the `github.com/aws/aws-lambda-go/lambda` package to handle the request and response. It uses the `github.com/aws/aws-sdk-go` package to interact with DynamoDB and SNS.
