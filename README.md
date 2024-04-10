@@ -62,7 +62,7 @@ The source code for this function can be found in the [src/backend/service](/src
 
 This component uses **higher-order-functions** to implement the CRUD operations. 
 
-We have defined a generic function type of definition: 
+We have defined a generic function type of definition as shown below. It accepts a `context.Context` and `events.APIGatewayProxyRequest` as input and returns an `events.APIGatewayProxyResponse` and an `error` as output. : 
 
 ```go
 type HandlerFunc func(context.Context, events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error)
@@ -211,3 +211,10 @@ func SendAlert(dynamoCli *dynamodb.DynamoDB, snsCli *sns.SNS, snsArn string) {
 ```
 
 The source code for this function can be found in the [src/backend/alerter](/src/backend/alerter).
+
+
+## Deployment
+
+To deploy the code, we compile the code using the `go build` command, which creates a binary. This binary is then zipped and uploaded to AWS Lambda. 
+
+![Deployment](./assets/subscription-deployment.drawio.png)
