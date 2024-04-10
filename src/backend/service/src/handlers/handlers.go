@@ -144,6 +144,18 @@ func HandlerSubscriptionID(ctx context.Context, request events.APIGatewayProxyRe
 			Body:       string(responseBody),
 		}, nil
 	}
+
+	if httpMethod == "OPTIONS" {
+		return events.APIGatewayProxyResponse{
+			StatusCode: 200,
+			Headers: map[string]string{
+				"Access-Control-Allow-Origin":      "*",
+				"Access-Control-Allow-Methods":     "GET, POST, OPTIONS, DELETE",
+				"Access-Control-Allow-Headers":     "Content-Type, Authorization",
+				"Access-Control-Allow-Credentials": "true",
+			},
+		}, nil
+	}
 	return events.APIGatewayProxyResponse{StatusCode: 400, Body: "Bad Request"}, nil
 }
 

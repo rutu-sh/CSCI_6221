@@ -1,0 +1,9 @@
+/* Options page styles go here */
+body {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+}
+
+.input-field {
+  margin-bottom: 10px;
+}

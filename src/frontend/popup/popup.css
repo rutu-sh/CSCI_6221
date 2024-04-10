@@ -1,0 +1,339 @@
+/* Popup styles go here */
+body {
+    font-family: Arial, sans-serif;
+    min-width: 300px;
+}
+
+h2 {
+    text-align: center;
+    color: white !important;
+}
+
+h3{
+    margin-left: 10px;
+}
+
+.container{
+    margin-top: 0;
+    width: 100vw;
+}
+
+.bg {
+  background-image: url('bg.png');
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: flex-end; /* Align content to the right side */
+  align-items: center; /* Center content vertically */
+  height: 98vh; /* Set height to fill the entire viewport */
+}
+
+.cancel-btn, .view-btn, #register-btn, #forgot-password-btn {
+    margin-left: 10px;
+    width: 120px;
+    height: 40px;
+    color: white;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.cancel-btn {
+    background-color: rgb(232, 0, 0);
+}
+
+.view-btn {
+    background-color: rgb(0, 118, 177);
+}
+
+.plus-button {
+    margin-top: 20px;
+    width: 120px;
+    height: 40px;
+    background-color: rgb(0, 177, 118);
+    color: white;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.btn-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.input-field {
+    margin-bottom: 10px;
+}
+
+.login-section, #forgot-password-section, #register-section {
+    /* margin-top: 20px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 300px;
+    text-align: center; */
+      width: 300px;
+      padding: 20px;
+      background-color: transparent !important;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      position: absolute;
+      right: 70px; /* Adjust the distance from the right edge of the container */
+      top: 50%; /* Align the form vertically in the middle */
+      transform: translateY(-50%);
+  }
+  
+
+.login-section a {
+    text-decoration: none;
+    color: rgb(255, 0, 0);
+}
+
+.login-section a:hover {
+    text-decoration: underline;
+}
+
+#login-section {
+    width: 300px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color:transparent;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    color: white;
+  }
+  
+  /* Styling for headings */
+  h2 {
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  /* Styling for input fields */
+  .input-field {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+  }
+  
+  /* Styling for button */
+  #login-btn {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  #login-btn:hover {
+    background-color: #0056b3;
+  }
+
+  #register-section {
+    width: 300px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Styling for input fields */
+  .input-field {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+  }
+  
+  /* Styling for button */
+  #register-btn {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  #register-btn:hover {
+    background-color: #0056b3;
+  }
+
+#forgot-password-section {
+    width: 300px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+#forgot-password-btn {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#forgot-password-btn:hover {
+    background-color: #0056b3;
+  }
+
+ul {
+    list-style-type: none;
+  }
+
+#add-subscription-form, #update-subscription-form {
+    width: 300px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.action-btn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.action-btn:hover {
+    background-color: #45a049;
+}
+
+
+/* CSS for subscription cards */
+.subscription-card {
+  flex: 0 0 calc(50% - 20px); /* Two cards in each row */
+  margin: 10px auto; /* Center the cards horizontally */
+  max-width: 1000px; /* Set a maximum width for the cards */
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  background-color: #b9b9b9;
+  color: black;
+}
+
+.subscription-card p {
+  margin: 5px 0;
+}
+
+/* Optional: Add hover effect */
+.subscription-card:hover {
+  cursor: pointer;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+#verification-code-section {
+  width: 300px;
+  padding: 20px;
+  background-color: transparent;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  position: absolute;
+  right: 70px; /* Adjust the distance from the right edge of the container */
+  top: 50%; /* Align the form vertically in the middle */
+  transform: translateY(-50%);
+}
+
+#verification-code-form {
+  /* Optional: Center the form contents horizontally */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#verification-code {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+#verify-code-btn {
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#verify-code-btn:hover {
+  background-color: #0056b3;
+}
+
+
+
+#user-info {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 10px;
+  margin-bottom: 20px;
+}
+
+#user-info img {
+  margin-right: 10px; /* Add some margin to the right of the image for spacing */
+}
+
+#username-display {
+  font-weight: bold; /* Make the username text bold */
+}
+
+.subhub-logo{
+  width: 50px;
+  height: 50px;
+  margin-left: 50px;
+}
+
+.update-btn {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.update-btn:hover {
+  background-color: #0056b3;
+}
+
+.delete-btn {
+  background-color: #ae0000;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+  margin-left: 20px;
+}
+
+.delete-btn:hover {
+  background-color: #da0000;
+}

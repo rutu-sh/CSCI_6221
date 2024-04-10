@@ -80,6 +80,7 @@ func DeleteItemFromTable(dynamoClient *dynamodb.DynamoDB, tableName, uuid string
 
 	log.Printf("Succesfully Deleted Item from table %s", tableName)
 	return DeleteResponse{
+		Message:    "Succesfully Deleted Item",
 		StatusCode: 200,
 	}
 }
