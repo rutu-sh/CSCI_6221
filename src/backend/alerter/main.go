@@ -8,6 +8,8 @@ package main
 
 import (
 	dynamoSub "Notifier/src/dynamo"
+	"context"
+	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
@@ -15,10 +17,15 @@ import (
 	"os"
 )
 
-func main() {
+type Event struct {
+	Response string `json:"response"`
+}
+
+func HandleRequest(ctx context.Context, event *Event) (string, error) {
 	/*
 		Call the alerting service
 	*/
+
 	region := os.Getenv("region")
 	snsArn := os.Getenv("sns_arn")
 
@@ -34,4 +41,9 @@ func main() {
 
 	dynamoSub.SendAlert(dynamoCli, snsCli, snsArn)
 
+	return "200", nil
+}
+
+func main() {
+	lambda.Start(HandleRequest)
 }
