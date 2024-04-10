@@ -70,3 +70,12 @@ We have used AWS Lambda and EventBridge for sending alerts to the users. The flo
 ![Subscription Alerter](./assets/subscription-sns-alerter.drawio.png)
 
 The main component of this flow is the Alerting Lambda function. This function is responsible for interacting with DynamoDB to get the list of subscriptions that are nearing their end and sending an email to the users. This function is written in **Go**. It uses the `github.com/aws/aws-lambda-go/lambda` package to handle the request and response. It uses the `github.com/aws/aws-sdk-go` package to interact with DynamoDB and SNS.
+
+Since the number of subscriptions across all users can go into millions, we have used Go's concurrency model to process the subscriptions in parallel. We have used Go's channels functionality to implement the [Worker Pool](https://gobyexample.com/worker-pools) pattern. This allows us to process multiple subscriptions concurrently and send alerts to the users in a timely manner.
+
+**Procesing subscription alerts concurrently using Goroutines and Channels**
+
+We create two channels: **Jobs** and **Results**. The Jobs channel contains the subscriptions fetched from the dynamodb. The Results channel contains the result of the alerting operation. We create a worker pool of 10 workers. Each worker reads from the Jobs channel, triggers a triggers the AWS SNS for that subscription and writes the result to the Results channel. 
+
+![Worker Pool](./assets/subscription-go-concurrency.drawio.png)
+
