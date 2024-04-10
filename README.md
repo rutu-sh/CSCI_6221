@@ -1,6 +1,4 @@
-# CSCI_6221
-
-## Language of Choice: Go
+# CSCI_6221 - GoLang Group
 
 ### Members
 
