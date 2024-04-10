@@ -58,6 +58,86 @@ The main component of this flow is the Subscription Management Lambda function. 
 
 The source code for this function can be found in the [src/backend/service](/src/backend/service).
 
+**CRUD Operations using Higher-Order-Functions (Functional Programming)**
+
+This component uses **higher-order-functions** to implement the CRUD operations. 
+
+We have defined a generic function type of definition: 
+
+```go
+type HandlerFunc func(context.Context, events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error)
+```
+
+The function `getHandlerFunc` takes the request path as a parameter and returns the appropriate handler function to be used. 
+
+```go
+func getHandlerFunc(path string) (HandlerFunc, error){
+    subscriptionRegex, err := regexp.Compile(`^\/subscriptions$`)
+	if err != nil {
+		return nil, err
+	}
+	subscriptionIDRegex, err := regexp.Compile(`^\/subscriptions\/([0-9a-zA-Z-]+)\/user\/([0-9a-zA-Z-]+)$`)
+	if err != nil {
+		return nil, err
+	}
+	subscriptionListRegex, err := regexp.Compile(`^\/subscriptions\/list\/([0-9a-zA-Z-]+)$`)
+	if err != nil {
+		return nil, err
+	}
+	updateSubscriptionIDRegex, err := regexp.Compile(`^\/subscriptions\/update\/([0-9a-zA-Z-]+)$`)
+	if err != nil {
+		return nil, err
+	}
+	switch true {
+	case subscriptionListRegex.MatchString(path) || subscriptionRegex.MatchString(path):
+		return handlers.HandlerSubscription, nil
+	case subscriptionIDRegex.MatchString(path):
+		return handlers.HandlerSubscriptionID, nil
+	case updateSubscriptionIDRegex.MatchString(path):
+		return handlers.HandlerUpdate, nil
+	default:
+		return nil, errors.New("no handler found")
+	}
+}
+```
+
+The function returned by `getHandlerFunc` is then used to handle the request. A **higher-order** function `callHandler` is passed the appropriate handler function, the context, and the request. This function calls the handler function, gets the response, and adds the necessary headers. 
+
+```go
+ func callHandler(hfunc HandlerFunc, ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+	/*
+		Handles the routing of the specific API call to the respective function.
+		Also, handles the response and error handling for the API calls.
+		Params: hfunc A function of type HandlerFunc which is the handler function to be called.
+				ctx context.Context
+				request
+		Returns: events.APIGatewayProxyResponse
+				 error
+	*/
+	response, err := hfunc(ctx, request)
+	if err != nil {
+		return events.APIGatewayProxyResponse{StatusCode: 500, Body: "Internal Server Error"}, err
+	}
+
+	responseJSON, err := json.Marshal(response.Body)
+	if err != nil {
+		return events.APIGatewayProxyResponse{StatusCode: 500, Body: "Internal Server Error"}, err
+	}
+
+	return events.APIGatewayProxyResponse{
+		StatusCode: response.StatusCode,
+		Body:       string(responseJSON),
+		Headers: map[string]string{
+			"Access-Control-Allow-Origin":      "*",
+			"Access-Control-Allow-Methods":     "GET, POST, OPTIONS, DELETE",
+			"Access-Control-Allow-Headers":     "Content-Type, Authorization",
+			"Access-Control-Allow-Credentials": "true",
+		},
+	}, nil
+}
+```
+
+
 ### 3. Alerting
 
 We have used AWS Lambda and EventBridge for sending alerts to the users. The flow is as follows:
@@ -79,3 +159,55 @@ We create two channels: **Jobs** and **Results**. The Jobs channel contains the 
 
 ![Worker Pool](./assets/subscription-go-concurrency.drawio.png)
 
+```go
+type Job struct {
+	Subscription SubscriptionsToAlert
+}
+
+type Result struct {
+	Subscription SubscriptionsToAlert
+	Error        error
+}
+
+func worker(dynamoCli *dynamodb.DynamoDB, snsCli *sns.SNS, snsArn string, jobs <-chan Job, results chan<- Result) {
+	for job := range jobs {
+		item := job.Subscription
+
+        /*
+            ...
+            code to process subscription and send alert
+            ...
+        */
+
+		results <- Result{Subscription: item}
+	}
+}
+
+func SendAlert(dynamoCli *dynamodb.DynamoDB, snsCli *sns.SNS, snsArn string) {
+	subscriptions := GetAllExpiringSubscriptions(dynamoCli)
+
+    // create channels
+	jobs := make(chan Job, len(subscriptions))
+	results := make(chan Result, len(subscriptions))
+
+    // create a worker pool of 10 workers
+	for w := 1; w <= workerCount; w++ {
+		go worker(dynamoCli, snsCli, snsArn, jobs, results)
+	}
+ 
+    // send jobs to the workers
+	for _, subscription := range subscriptions {
+		jobs <- Job{Subscription: subscription}
+	}
+	close(jobs)
+
+	for range subscriptions {
+		result := <-results
+		if result.Error != nil {
+			log.Printf("Error processing subscription for user %s: %v", result.Subscription.UserName, result.Error)
+		}
+	}
+}
+```
+
+The source code for this function can be found in the [src/backend/alerter](/src/backend/alerter).
