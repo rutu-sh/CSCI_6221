@@ -15,12 +15,14 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb/expression"
 )
 
+const workerCount = 10
+
 type GetItem struct {
-	UUID                 string
-	VendorName           string
-	VendorUrl            string
-	SubscriptionDuration string
-	RemindTime           string
+	UUID                 string `json:"uuid"`
+	VendorName           string `json:"vendor_name"`
+	VendorUrl            string `json:"vendor_url"`
+	SubscriptionDuration string `json:"duration"`
+	RemindTime           string `json:"remind_time"`
 }
 
 type GetResponse struct {
@@ -33,12 +35,8 @@ type GetResponse struct {
 }
 
 type SubList struct {
-	UUID                 string `json:"uuid"`
-	UserName             string `json:"username"`
-	RemindTime           string `json:"remind_time"`
-	VendorName           string `json:"vendor_name"`
-	VendorUrl            string `json:"vendor_url"`
-	SubscriptionDuration string `json:"duration"`
+	GetItem
+	UserName string `json:"username"`
 }
 
 type StatusResponse struct {
@@ -49,6 +47,35 @@ type StatusResponse struct {
 type SubResponse struct {
 	StatusCode    int
 	Subscriptions []GetResponse `json:"subscriptions"`
+}
+
+type Result struct {
+	subscription GetResponse
+	err          error
+}
+
+type Job struct {
+	item map[string]*dynamodb.AttributeValue
+}
+
+func worker(jobs <-chan Job, results chan<- Result) {
+	for job := range jobs {
+		item := GetItem{}
+		err := dynamodbattribute.UnmarshalMap(job.item, &item)
+		if err != nil {
+			results <- Result{err: err}
+			continue
+		}
+		results <- Result{
+			subscription: GetResponse{
+				UUID:                 item.UUID,
+				VendorName:           item.VendorName,
+				VendorUrl:            item.VendorUrl,
+				SubscriptionDuration: item.SubscriptionDuration,
+				Status:               200,
+			},
+		}
+	}
 }
 
 func GetSubscription(dynamoClient *dynamodb.DynamoDB, tableName, uuid, username string) GetResponse {
@@ -175,13 +202,34 @@ func GetSubscriptions(dynamoClient *dynamodb.DynamoDB, tableName, userName strin
 			}
 		}
 	}
+	/*
+		Using the worker pool pattern we process all the subscriptions for each user
+		Two channels are created
+			1. Job - to send work to the worker goroutines
+			2. Results - to receive the results from the worker goroutines
+		10 worker goroutines are created. Each worker goroutine receives Job instances
+		fom the jobs channel, processes them, and stores the results back to Results
+		channel.
+		All subscriptions queried from the Table are sent to the Jobs channel. Then
+		10 workers process them in parallel.
+	*/
+	jobs := make(chan Job, len(result.Items))
+	results := make(chan Result, len(result.Items))
+	subscriptions := []GetResponse{}
 
-	var subscriptions []GetResponse
+	for w := 0; w < workerCount; w++ {
+		go worker(jobs, results)
+	}
+
 	for _, i := range result.Items {
-		item := GetItem{}
-		err = dynamodbattribute.UnmarshalMap(i, &item)
-		if err != nil {
-			log.Printf("Failed to unmarshal Record, %v", err)
+		jobs <- Job{item: i}
+	}
+	close(jobs)
+
+	for range result.Items {
+		res := <-results
+		if res.err != nil {
+			log.Printf("Failed to unmarshal Record, %v", res.err)
 			return SubResponse{
 				StatusCode: 400,
 				Subscriptions: []GetResponse{
@@ -191,13 +239,7 @@ func GetSubscriptions(dynamoClient *dynamodb.DynamoDB, tableName, userName strin
 				},
 			}
 		}
-		subscriptions = append(subscriptions, GetResponse{
-			UUID:                 item.UUID,
-			VendorName:           item.VendorName,
-			VendorUrl:            item.VendorUrl,
-			SubscriptionDuration: item.SubscriptionDuration,
-			Status:               200,
-		})
+		subscriptions = append(subscriptions, res.subscription)
 	}
 
 	finalResponse := SubResponse{

@@ -31,6 +31,8 @@ type GetItem struct {
 	UserName string
 }
 
+type HandlerFunc func(context.Context, events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error)
+
 func initialize() dynamoAttr {
 	/*
 		Used to initialize the table attributes and sdk clients
@@ -191,48 +193,17 @@ func handlerUpdate(ctx context.Context, request events.APIGatewayProxyRequest) (
 	return events.APIGatewayProxyResponse{StatusCode: 400, Body: "Bad Request"}, nil
 }
 
-func handlerPath(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+func callHandler(hfunc HandlerFunc, ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	/*
-		Handles the routing of the specific API call to the respective function
-		Params: ctx context.Context
-				request events.APIGatewayProxyRequest
+		Handles the routing of the specific API call to the respective function.
+		Also, handles the response and error handling for the API calls.
+		Params: hfunc A function of type HandlerFunc which is the handler function to be called.
+				ctx context.Context
+				request
 		Returns: events.APIGatewayProxyResponse
-		         error
+				 error
 	*/
-	path := request.Path
-	var handlerFunc func(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error)
-	fmt.Println(request)
-	fmt.Println("Entering Handler path")
-	fmt.Println("Path: ", path)
-	fmt.Println(path)
-
-	// We need to regex match the path after subscription/* to parse the url correctly
-	subscriptionIDRegex, err1 := regexp.Compile(`^\/subscriptions\/([0-9a-zA-Z-]+)\/user\/([0-9a-zA-Z-]+)$`)
-	subscriptionListRegex, err2 := regexp.Compile(`^\/subscriptions\/list\/([0-9a-zA-Z-]+)$`)
-
-	if err1 != nil {
-		return events.APIGatewayProxyResponse{StatusCode: 500, Body: "Internal Server Error"}, err1
-	}
-	if err2 != nil {
-		return events.APIGatewayProxyResponse{StatusCode: 500, Body: "Internal Server Error"}, err2
-	}
-	// We need to regex match the path after subscription/update/* to parse the url correctly
-	updateSubscriptionIDRegex, err := regexp.Compile(`^\/subscriptions\/update\/([0-9a-zA-Z-]+)$`)
-	if err != nil {
-		return events.APIGatewayProxyResponse{StatusCode: 500, Body: "Internal Server Error"}, err
-	}
-	// Call the correct function only when regex matches AKA results in BOOL True
-	switch true {
-	case subscriptionListRegex.MatchString(path):
-		handlerFunc = handlerSubscription
-	case subscriptionIDRegex.MatchString(path):
-		handlerFunc = handlerSubscriptionID
-	case updateSubscriptionIDRegex.MatchString(path):
-		handlerFunc = handlerUpdate
-	default:
-		return events.APIGatewayProxyResponse{StatusCode: 404, Body: "Not Found"}, nil
-	}
-	response, err := handlerFunc(ctx, request)
+	response, err := hfunc(ctx, request)
 	if err != nil {
 		return events.APIGatewayProxyResponse{StatusCode: 500, Body: "Internal Server Error"}, err
 	}
@@ -252,6 +223,59 @@ func handlerPath(ctx context.Context, request events.APIGatewayProxyRequest) (ev
 			"Access-Control-Allow-Credentials": "true",
 		},
 	}, nil
+}
+
+func handlerPath(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+	/*
+		Handles the routing of the specific API call to the respective function
+		Params: ctx context.Context
+				request events.APIGatewayProxyRequest
+		Returns: events.APIGatewayProxyResponse
+		         error
+	*/
+	path := request.Path
+	var handlerFunc HandlerFunc
+	fmt.Println("Entering Handler path: ", path)
+
+	// We need to regex match the path after subscription/* to parse the url correctly
+	subscriptionRegex, err := regexp.Compile(`^\/subscriptions$`)
+	if err != nil {
+		return events.APIGatewayProxyResponse{StatusCode: 500, Body: "Internal Server Error"}, err
+	}
+
+	subscriptionIDRegex, err := regexp.Compile(`^\/subscriptions\/([0-9a-zA-Z-]+)\/user\/([0-9a-zA-Z-]+)$`)
+	if err != nil {
+		return events.APIGatewayProxyResponse{StatusCode: 500, Body: "Internal Server Error"}, err
+	}
+
+	subscriptionListRegex, err := regexp.Compile(`^\/subscriptions\/list\/([0-9a-zA-Z-]+)$`)
+	if err != nil {
+		return events.APIGatewayProxyResponse{StatusCode: 500, Body: "Internal Server Error"}, err
+	}
+
+	// We need to regex match the path after subscription/update/* to parse the url correctly
+	updateSubscriptionIDRegex, err := regexp.Compile(`^\/subscriptions\/update\/([0-9a-zA-Z-]+)$`)
+	if err != nil {
+		return events.APIGatewayProxyResponse{StatusCode: 500, Body: "Internal Server Error"}, err
+	}
+
+	// Call the correct function only when regex matches AKA results in BOOL True
+	switch true {
+	case subscriptionListRegex.MatchString(path) || subscriptionRegex.MatchString(path):
+		handlerFunc = handlerSubscription
+	case subscriptionIDRegex.MatchString(path):
+		handlerFunc = handlerSubscriptionID
+	case updateSubscriptionIDRegex.MatchString(path):
+		handlerFunc = handlerUpdate
+	default:
+		return events.APIGatewayProxyResponse{StatusCode: 404, Body: "Not Found"}, nil
+	}
+
+	res, err := callHandler(handlerFunc, ctx, request)
+	if err != nil {
+		return events.APIGatewayProxyResponse{StatusCode: 500, Body: "Internal Server Error"}, err
+	}
+	return res, nil
 }
 
 func main() {
