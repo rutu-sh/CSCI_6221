@@ -5,6 +5,9 @@ info:
     subscriptions API specification
   termsOfService: http://swagger.io/terms/
   version: 1.0.11
+servers:
+  - url: https://cfc92716-6649-429d-9a88-5624869cfd8f.mock.pstmn.io
+    description: mock-server
 paths:
   /subscriptions:
     get:
@@ -83,7 +86,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Subscription'
-                
+        '500':
+          description: internal server error 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/internal-server-error'
   /subscription/{subscription_id}:
     get:
       tags:
