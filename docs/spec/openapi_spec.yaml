@@ -1,0 +1,315 @@
+openapi: 3.0.3
+info:
+  title: Subscriptions API 
+  description: |-
+    subscriptions API specification
+  termsOfService: http://swagger.io/terms/
+  version: 1.0.11
+paths:
+  /subscriptions:
+    get:
+      parameters:
+        - in: query
+          name: username
+          schema:
+            $ref: '#/components/schemas/username'
+          description: the username
+      responses:
+        '200':
+          description: successful operation
+          headers:
+            Access-Control-Allow-Origin:
+              description: 'Specifies the origins that are allowed to access the resource.'
+              schema:
+                $ref: '#/components/schemas/access-control-allow-origin'
+            Access-Control-Allow-Methods:
+              description: 'Specifies the methods allowed when accessing the resource.'
+              schema:
+                $ref: '#/components/schemas/access-control-allow-methods'
+            Access-Control-Allow-Headers:
+              description: 'Specifies the headers allowed when accessing the resource.'
+              schema:
+                $ref: '#/components/schemas/access-control-allow-headers'
+          content:
+            application/json:
+              schema:
+                type: array
+                items: 
+                  $ref: '#/components/schemas/Subscription'
+        '500':
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: 
+                    type: string
+                    example: an internal server error has occurred
+        '404':
+          description: not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: not found 
+    post:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubscriptionInput'
+      responses:
+        '201':
+          description: successful create
+          headers:
+            Access-Control-Allow-Origin:
+              description: 'Specifies the origins that are allowed to access the resource.'
+              schema:
+                $ref: '#/components/schemas/access-control-allow-origin'
+            Access-Control-Allow-Methods:
+              description: 'Specifies the methods allowed when accessing the resource.'
+              schema:
+                $ref: '#/components/schemas/access-control-allow-methods'
+            Access-Control-Allow-Headers:
+              description: 'Specifies the headers allowed when accessing the resource.'
+              schema:
+                $ref: '#/components/schemas/access-control-allow-headers'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subscription'
+                
+  /subscription/{subscription_id}:
+    get:
+      tags:
+        - subscription-by-id
+      parameters:
+        - in: query
+          name: username
+          schema:
+            $ref: '#/components/schemas/username'
+          description: the username
+        - in: path
+          name: subscription_id
+          required: true
+          schema:
+            $ref: '#/components/schemas/uuid'
+      responses:
+        '200':
+          description: successful fetch
+          headers:
+            Access-Control-Allow-Origin:
+              description: 'Specifies the origins that are allowed to access the resource.'
+              schema:
+                $ref: '#/components/schemas/access-control-allow-origin'
+            Access-Control-Allow-Methods:
+              description: 'Specifies the methods allowed when accessing the resource.'
+              schema:
+                $ref: '#/components/schemas/access-control-allow-methods'
+            Access-Control-Allow-Headers:
+              description: 'Specifies the headers allowed when accessing the resource.'
+              schema:
+                $ref: '#/components/schemas/access-control-allow-headers'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subscription'
+        '404':
+          description: subscription not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/not-found-response'
+        '500':
+          description: internal server error 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/internal-server-error'
+    put:
+      tags:
+        - subscription-by-id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubscriptionInput'
+      parameters:
+        - in: path
+          name: subscription_id
+          required: true
+          schema:
+            $ref: '#/components/schemas/uuid'
+      responses:
+        '200':
+          description: successful update
+          headers:
+            Access-Control-Allow-Origin:
+              description: 'Specifies the origins that are allowed to access the resource.'
+              schema:
+                $ref: '#/components/schemas/access-control-allow-origin'
+            Access-Control-Allow-Methods:
+              description: 'Specifies the methods allowed when accessing the resource.'
+              schema:
+                $ref: '#/components/schemas/access-control-allow-methods'
+            Access-Control-Allow-Headers:
+              description: 'Specifies the headers allowed when accessing the resource.'
+              schema:
+                $ref: '#/components/schemas/access-control-allow-headers'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subscription'
+        '404': 
+          description: subscription not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/not-found-response'
+        '500':
+          description: internal server error 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/internal-server-error'
+    delete:
+      tags:
+        - subscription-by-id
+      parameters:
+        - in: path
+          name: subscription_id
+          required: true
+          schema:
+            $ref: '#/components/schemas/uuid'
+        - in: query
+          name: username
+          schema:
+            $ref: '#/components/schemas/username'
+          description: the username
+      responses:
+        '200':
+          description: successful delete
+          headers:
+            Access-Control-Allow-Origin:
+              description: 'Specifies the origins that are allowed to access the resource.'
+              schema:
+                $ref: '#/components/schemas/access-control-allow-origin'
+            Access-Control-Allow-Methods:
+              description: 'Specifies the methods allowed when accessing the resource.'
+              schema:
+                $ref: '#/components/schemas/access-control-allow-methods'
+            Access-Control-Allow-Headers:
+              description: 'Specifies the headers allowed when accessing the resource.'
+              schema:
+                $ref: '#/components/schemas/access-control-allow-headers'
+        '404':
+          description: subscription not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/not-found-response'
+        '500':
+          description: internal server error 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/internal-server-error'
+components:
+  schemas:
+    Subscription:
+      type: object
+      properties:
+        uuid:
+          $ref: '#/components/schemas/uuid'
+        name:
+          $ref: '#/components/schemas/name'
+        url:
+          $ref: '#/components/schemas/url'
+        settings_url:
+          $ref: '#/components/schemas/settings_url'
+        plan:
+          $ref: '#/components/schemas/plan'
+        start_date:
+          $ref: '#/components/schemas/date'
+        cost:
+          $ref: '#/components/schemas/cost'
+        last_payment_date:
+          $ref: '#/components/schemas/date'
+        next_payment_date:
+          $ref: '#/components/schemas/date'
+        icon:
+          $ref: '#/components/schemas/icon'
+    SubscriptionInput:
+      type: object
+      properties:
+        username: 
+          $ref: '#/components/schemas/username'
+        name:
+          $ref: '#/components/schemas/name'
+        url:
+          $ref: '#/components/schemas/url'
+        settings_url:
+          $ref: '#/components/schemas/settings_url'
+        plan:
+          $ref: '#/components/schemas/plan'
+        start_date:
+          $ref: '#/components/schemas/date'
+        last_payment_date:
+          $ref: '#/components/schemas/date'
+    uuid:
+      type: string
+      example: 1234-123-123
+    name:
+      type: string
+      example: test-subscription-name
+    username:
+      type: string
+      example: username1
+    url:
+      type: string
+      example: https://www.netflix.com
+    settings_url:
+      type: string
+      example: https://www.netflix.com/settings
+    plan:
+      type: string
+      enum: ['monthly', 'weekly', 'yearly', 'quarterly']
+      example: 'monthly'
+    date:
+      type: string
+      example: 2024-04-30
+      default: 2024-04-30
+    cost:
+      type: number
+      format: float
+      example: 19.04
+    icon:
+      type: string
+      example: https://www.netflix.com/icon
+    access-control-allow-origin:
+      type: string
+      example: '*'
+    access-control-allow-methods:
+      type: string
+      example: 'GET, POST, DELETE, PUT, OPTIONS'
+    access-control-allow-headers:
+      type: string
+      example: 'Content-Type, Authorization'
+    not-found-response:
+      type: object
+      properties:
+        message:
+          type: string
+          example: subscription not found
+    internal-server-error:
+      type: object
+      properties:
+        message:
+          type: string
+          example: internal server error
