@@ -266,9 +266,9 @@ components:
           $ref: '#/components/schemas/settings_url'
         plan:
           $ref: '#/components/schemas/plan'
+        cost:
+          $ref: '#/components/schemas/cost'
         start_date:
-          $ref: '#/components/schemas/date'
-        last_payment_date:
           $ref: '#/components/schemas/date'
     uuid:
       type: string
