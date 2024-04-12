@@ -1,4 +1,5 @@
 package config
 
 const AWS_REGION = "us-east-1"
-const DYNAMODB_TABLE_NAME = "subscriptions-new"
+const SUBSCRIPTIONS_DYNAMODB_TABLE = "subscriptions-new"
+const PAYMENTS_DYNAMODB_TABLE = "payments-new"

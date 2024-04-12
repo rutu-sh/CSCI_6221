@@ -2,43 +2,46 @@ package repository
 
 import (
 	"errors"
-	"fmt"
-	"os"
 	"strconv"
-	"subHandler/src/config"
 	"subHandler/src/models"
 
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 	"github.com/rs/zerolog/log"
 )
 
-func initialize() models.DynamoAttr {
+func IsSubscriptionExists(dynamoClient *dynamodb.DynamoDB, tableName string, partitionKey string, sortKey string) bool {
 	/*
-		Used to initialize the table attributes and sdk clients
-		Params: None
-		Return: None
+		Checks if a given Item exists in the DynamoDB table.
+		Params: dynamoClient *dynamodb.DynamoDB
+				tableName
+				partitionKey
+				sortKey
+		Return: bool
 	*/
-	awsRegion := config.AWS_REGION
-	dynamodbTable := config.DYNAMODB_TABLE_NAME
-
-	sess, err := session.NewSession(&aws.Config{
-		Region: aws.String(awsRegion),
+	log.Info().Msg("Checking if subscription exists")
+	res, err := dynamoClient.GetItem(&dynamodb.GetItemInput{
+		TableName: aws.String(tableName),
+		Key: map[string]*dynamodb.AttributeValue{
+			"username": {
+				S: aws.String(partitionKey),
+			},
+			"uuid": {
+				S: aws.String(sortKey),
+			},
+		},
 	})
-
 	if err != nil {
-		fmt.Println("Error creating sess", err)
-		os.Exit(0)
+		log.Error().Err(err).Msg("Error checking if subscription exists")
+		return false
 	}
-
-	dynamoClient := dynamodb.New(sess)
-	return models.DynamoAttr{
-		DynamoCli: dynamoClient,
-		AwsRegion: awsRegion,
-		TableName: dynamodbTable,
+	if len(res.Item) == 0 {
+		log.Info().Msg("Subscription does not exist")
+		return false
 	}
+	log.Info().Msg("Subscription exists")
+	return true
 }
 
 func AddSubscription(item models.SubscriptionDynamodb) (models.SubscriptionDynamodb, error) {
@@ -50,7 +53,7 @@ func AddSubscription(item models.SubscriptionDynamodb) (models.SubscriptionDynam
 		Return: models.SubscriptionDynamodb, error
 	*/
 
-	da := initialize()
+	da := initialize("subscriptions")
 	dynamoClient := da.DynamoCli
 	tableName := da.TableName
 
@@ -78,7 +81,7 @@ func GetSubscription(partitionKey string, sortKey string) (models.SubscriptionDy
 				sortKey
 		Return: models.SubscriptionDynamodb, error
 	*/
-	da := initialize()
+	da := initialize("subscriptions")
 	dynamoClient := da.DynamoCli
 	tableName := da.TableName
 
@@ -127,15 +130,14 @@ func DeleteSubscription(partitionKey string, sortKey string) error {
 		Return: error
 	*/
 
-	da := initialize()
+	da := initialize("subscriptions")
 	dynamoClient := da.DynamoCli
 	tableName := da.TableName
 
 	log.Info().Msg("Deleting subscription")
-	_, sub_get_err := GetSubscription(partitionKey, sortKey)
-	if sub_get_err != nil {
-		log.Error().Err(sub_get_err).Msg("Error deleting subscription. Subscription Not found")
-		return sub_get_err
+	if !IsSubscriptionExists(dynamoClient, tableName, partitionKey, sortKey) {
+		log.Error().Msg("Error deleting subscription. Subscription does not exist.")
+		return errors.New("404")
 	}
 
 	input := &dynamodb.DeleteItemInput{
@@ -170,16 +172,18 @@ func UpdateSubscription(partitionKey string, sortKey string, updateItem models.S
 				updateItem models.SubscriptionUpdate
 		Return: models.SubscriptionDynamodb, error
 	*/
-	da := initialize()
+	da := initialize("subscriptions")
 	dynamoClient := da.DynamoCli
 	tableName := da.TableName
 
 	log.Info().Msg("Updating subscription")
-	subscription, err := GetSubscription(partitionKey, sortKey)
-	if err != nil {
-		return models.SubscriptionDynamodb{}, err
+
+	if !IsSubscriptionExists(dynamoClient, tableName, partitionKey, sortKey) {
+		log.Error().Msg("Error updating subscription. Subscription does not exist.")
+		return models.SubscriptionDynamodb{}, errors.New("404")
 	}
 
+	subscription, _ := GetSubscription(partitionKey, sortKey)
 	newSubscription := models.SubscriptionDynamodb{
 		UserName:        partitionKey,
 		UUID:            sortKey,
@@ -229,7 +233,7 @@ func UpdateSubscription(partitionKey string, sortKey string, updateItem models.S
 			"#last_payment_date": aws.String("last_payment_date"),
 		},
 	}
-	_, err = dynamoClient.UpdateItem(tableInput)
+	_, err := dynamoClient.UpdateItem(tableInput)
 	if err != nil {
 		log.Error().Err(err).Msg("Error updating subscription")
 		return models.SubscriptionDynamodb{}, err
@@ -246,7 +250,7 @@ func GetUserSubscriptions(partitionKey string) ([]models.SubscriptionDynamodb, e
 				partitionKey
 		Return: []models.SubscriptionDynamodb, error
 	*/
-	da := initialize()
+	da := initialize("subscriptions")
 	dynamoClient := da.DynamoCli
 	tableName := da.TableName
 

@@ -13,13 +13,6 @@ type SubscriptionDynamodb struct {
 	LastPaymentDate string  `json:"last_payment_date"`
 }
 
-type PaymentsDynamodb struct {
-	UUID           string  `json:"uuid"`
-	SubscriptionID string  `json:"subscription_id"`
-	Amount         float32 `json:"amount"`
-	PaymentDate    string  `json:"payment_date"`
-}
-
 type SubscriptionUpdate struct {
 	Name            string  `json:"name"`
 	Plan            string  `json:"plan"`
