@@ -7,3 +7,8 @@ type PaymentDynamodb struct {
 	Amount         float32 `json:"amount"`
 	PaymentDate    string  `json:"payment_date"`
 }
+
+type PaymentUpdate struct {
+	Amount      float32 `json:"amount"`
+	PaymentDate string  `json:"payment_date"`
+}

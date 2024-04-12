@@ -41,7 +41,7 @@ func AddPayment(item models.PaymentCreateInput) (models.PaymentDynamodb, error) 
 	return res, nil
 }
 
-func GetPayments(partitionKey string) ([]models.PaymentDynamodb, error) {
+func GetPayments(subscriptionId string) ([]models.PaymentDynamodb, error) {
 	/*
 		Returns all the payments for a given subscription.
 		Params: dynamoClient *dynamodb.DynamoDB
@@ -49,12 +49,70 @@ func GetPayments(partitionKey string) ([]models.PaymentDynamodb, error) {
 				partitionKey
 		Return: []models.PaymentDynamodb, error
 	*/
-	log.Info().Str("SubscriptionId", partitionKey).Msg("Getting payments")
-	res, err := repository.GetSubscriptionPayments(partitionKey)
+	log.Info().Str("SubscriptionId", subscriptionId).Msg("Getting payments")
+	res, err := repository.GetSubscriptionPayments(subscriptionId)
 	if err != nil {
-		log.Error().Err(err).Str("SubscriptionId", partitionKey).Msg("Error getting payments")
+		log.Error().Err(err).Str("SubscriptionId", subscriptionId).Msg("Error getting payments")
 		return []models.PaymentDynamodb{}, err
 	}
-	log.Info().Str("SubscriptionId", partitionKey).Msg("Payments retrieved")
+	log.Info().Str("SubscriptionId", subscriptionId).Msg("Payments retrieved")
 	return res, nil
+}
+
+func GetPayment(subscriptionId string, paymentId string) (models.PaymentDynamodb, error) {
+	/*
+		Returns a payment for a given subscription.
+		Params: dynamoClient *dynamodb.DynamoDB
+				tableName
+				partitionKey
+				sortKey
+		Return: models.PaymentDynamodb, error
+	*/
+	log.Info().Str("SubscriptionId", subscriptionId).Str("PaymentId", paymentId).Msg("Getting payment")
+	res, err := repository.GetSubscriptionPayment(subscriptionId, paymentId)
+	if err != nil {
+		log.Error().Err(err).Str("SubscriptionId", subscriptionId).Str("PaymentId", paymentId).Msg("Error getting payment")
+		return models.PaymentDynamodb{}, err
+	}
+	log.Info().Str("SubscriptionId", subscriptionId).Str("PaymentId", paymentId).Msg("Payment retrieved")
+	return res, nil
+}
+
+func UpdatePayment(subscriptionId string, paymentId string, item models.PaymentUpdate) (models.PaymentDynamodb, error) {
+	/*
+		Updates a payment for a given subscription.
+		Params: dynamoClient *dynamodb.DynamoDB
+				tableName
+				partitionKey
+				sortKey
+				item models.PaymentUpdate
+		Return: models.PaymentDynamodb, error
+	*/
+	log.Info().Str("SubscriptionId", subscriptionId).Str("PaymentId", paymentId).Msg("Updating payment")
+	res, err := repository.UpdateSubscriptionPayment(subscriptionId, paymentId, item)
+	if err != nil {
+		log.Error().Err(err).Str("SubscriptionId", subscriptionId).Str("PaymentId", paymentId).Msg("Error updating payment")
+		return models.PaymentDynamodb{}, err
+	}
+	log.Info().Str("SubscriptionId", subscriptionId).Str("PaymentId", paymentId).Msg("Payment updated")
+	return res, nil
+}
+
+func DeletePayment(subscriptionId string, paymentId string) error {
+	/*
+		Deletes a payment for a given subscription.
+		Params: dynamoClient *dynamodb.DynamoDB
+				tableName
+				partitionKey
+				sortKey
+		Return: error
+	*/
+	log.Info().Str("SubscriptionId", subscriptionId).Str("PaymentId", paymentId).Msg("Deleting payment")
+	err := repository.DeleteSubscriptionPayment(subscriptionId, paymentId)
+	if err != nil {
+		log.Error().Err(err).Str("SubscriptionId", subscriptionId).Str("PaymentId", paymentId).Msg("Error deleting payment")
+		return err
+	}
+	log.Info().Str("SubscriptionId", subscriptionId).Str("PaymentId", paymentId).Msg("Payment deleted")
+	return nil
 }
