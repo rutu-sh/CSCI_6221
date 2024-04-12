@@ -50,3 +50,53 @@ func AddSubscriptionPayment(item models.PaymentDynamodb) (models.PaymentDynamodb
 	log.Info().Msg("Payment added successfully")
 	return item, nil
 }
+
+func GetSubscriptionPayments(partitionKey string) ([]models.PaymentDynamodb, error) {
+	/*
+		Returns all the payments for a given subscription.
+		Params: dynamoClient *dynamodb.DynamoDB
+				tableName
+				partitionKey
+		Return: []models.PaymentDynamodb, error
+	*/
+
+	da := initialize("payments")
+	dynamoClient := da.DynamoCli
+	tableName := da.TableName
+
+	log.Info().Str("SubscriptionId", partitionKey).Msg("Getting subscription payments")
+
+	// query the dynamodb table using the partition key
+	input := &dynamodb.QueryInput{
+		TableName: aws.String(tableName),
+		KeyConditions: map[string]*dynamodb.Condition{
+			"subscription_id": {
+				ComparisonOperator: aws.String("EQ"),
+				AttributeValueList: []*dynamodb.AttributeValue{
+					{
+						S: aws.String(partitionKey),
+					},
+				},
+			},
+		},
+	}
+	result, err := dynamoClient.Query(input)
+	if err != nil {
+		log.Error().Err(err).Msg("Error getting subscription payments")
+		return nil, err
+	}
+
+	items := []models.PaymentDynamodb{}
+	for _, i := range result.Items {
+		item := models.PaymentDynamodb{}
+		err = dynamodbattribute.UnmarshalMap(i, &item)
+		if err != nil {
+			log.Error().Err(err).Msg("Error getting subscription payments")
+			return nil, err
+		}
+		items = append(items, item)
+	}
+
+	log.Info().Str("SubscriptionId", partitionKey).Int("PaymentCount", len(items)).Msg("Subscription payments retrieved successfully")
+	return items, nil
+}

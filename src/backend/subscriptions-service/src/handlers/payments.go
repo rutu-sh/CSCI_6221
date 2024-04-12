@@ -42,5 +42,23 @@ func PaymentsHandler(ctx context.Context, request events.APIGatewayProxyRequest)
 			Body:       string(resBody),
 		}, nil
 	}
+	if reqMethod == "GET" {
+		subscriptionId := request.QueryStringParameters["subscription_id"]
+		if subscriptionId == "" {
+			return events.APIGatewayProxyResponse{StatusCode: 400, Body: "Bad Request"}, nil
+		}
+		res, err := service.GetPayments(subscriptionId)
+		if err != nil {
+			return events.APIGatewayProxyResponse{StatusCode: 500, Body: "Internal Server Error"}, err
+		}
+		resBody, err := json.Marshal(res)
+		if err != nil {
+			return events.APIGatewayProxyResponse{StatusCode: 500, Body: "Internal Server Error"}, err
+		}
+		return events.APIGatewayProxyResponse{
+			StatusCode: 200,
+			Body:       string(resBody),
+		}, nil
+	}
 	return events.APIGatewayProxyResponse{StatusCode: 400, Body: "Bad Request"}, nil
 }

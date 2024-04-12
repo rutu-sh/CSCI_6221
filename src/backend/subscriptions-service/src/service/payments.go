@@ -40,3 +40,21 @@ func AddPayment(item models.PaymentCreateInput) (models.PaymentDynamodb, error) 
 	log.Info().Str("UUID", uuid).Str("SubscriptionId", item.SubscriptionId).Msg("Payment added")
 	return res, nil
 }
+
+func GetPayments(partitionKey string) ([]models.PaymentDynamodb, error) {
+	/*
+		Returns all the payments for a given subscription.
+		Params: dynamoClient *dynamodb.DynamoDB
+				tableName
+				partitionKey
+		Return: []models.PaymentDynamodb, error
+	*/
+	log.Info().Str("SubscriptionId", partitionKey).Msg("Getting payments")
+	res, err := repository.GetSubscriptionPayments(partitionKey)
+	if err != nil {
+		log.Error().Err(err).Str("SubscriptionId", partitionKey).Msg("Error getting payments")
+		return []models.PaymentDynamodb{}, err
+	}
+	log.Info().Str("SubscriptionId", partitionKey).Msg("Payments retrieved")
+	return res, nil
+}
