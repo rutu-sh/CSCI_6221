@@ -43,6 +43,14 @@ func getHandlerFunc(path string) (HandlerFunc, error) {
 	if subscriptionByIdRegex.MatchString(path) {
 		return handlers.SubscriptionByIDHandler, nil
 	}
+
+	paymentsRegex, err := regexp.Compile(`^\/v2\/payments$`)
+	if err != nil {
+		return nil, err
+	}
+	if paymentsRegex.MatchString(path) {
+		return handlers.PaymentsHandler, nil
+	}
 	return nil, nil
 }
 

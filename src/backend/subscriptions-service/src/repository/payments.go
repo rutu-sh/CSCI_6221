@@ -2,6 +2,7 @@ package repository
 
 import (
 	"errors"
+	"subHandler/src/config"
 	"subHandler/src/models"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -10,7 +11,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-func AddSubscriptionPayment(item models.PaymentsDynamodb) (models.PaymentsDynamodb, error) {
+func AddSubscriptionPayment(item models.PaymentDynamodb) (models.PaymentDynamodb, error) {
 	/*
 		Adds a given Item to the DynamoDB table.
 		Params: dynamoClient *dynamodb.DynamoDB
@@ -24,7 +25,7 @@ func AddSubscriptionPayment(item models.PaymentsDynamodb) (models.PaymentsDynamo
 	tableName := da.TableName
 
 	log.Info().Msg("Adding subscription payment")
-	if !IsSubscriptionExists(dynamoClient, tableName, item.SubscriptionId, item.UUID) {
+	if !IsSubscriptionExists(dynamoClient, config.SUBSCRIPTIONS_DYNAMODB_TABLE, item.UserName, item.SubscriptionId) {
 		log.Info().Msg("Subscription does not exists")
 		return item, errors.New("subscription does not exist")
 	}

@@ -9,3 +9,10 @@ type SubscriptionCreateInput struct {
 	Cost        string `json:"cost"`
 	StartDate   string `json:"start_date"`
 }
+
+type PaymentCreateInput struct {
+	SubscriptionId string `json:"subscription_id"`
+	UserName       string `json:"username"`
+	Amount         string `json:"amount"`
+	PaymentDate    string `json:"payment_date"`
+}
