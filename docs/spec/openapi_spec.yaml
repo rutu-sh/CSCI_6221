@@ -11,9 +11,12 @@ servers:
 paths:
   /subscriptions:
     get:
+      tags:
+        - subscriptions
       parameters:
         - in: query
           name: username
+          required: true
           schema:
             $ref: '#/components/schemas/username'
           description: the username
@@ -60,6 +63,8 @@ paths:
                     type: string
                     example: not found 
     post:
+      tags:
+        - subscriptions
       requestBody:
         required: true
         content:
@@ -99,6 +104,7 @@ paths:
       parameters:
         - in: query
           name: username
+          required: true
           schema:
             $ref: '#/components/schemas/username'
           description: the username
@@ -139,7 +145,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/internal-server-error'
-    put:
+    patch:
       tags:
         - subscription-by-id
       requestBody:
@@ -147,7 +153,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SubscriptionInput'
+              $ref: '#/components/schemas/SubscriptionUpdate'
       parameters:
         - in: path
           name: subscription_id
@@ -197,6 +203,7 @@ paths:
             $ref: '#/components/schemas/uuid'
         - in: query
           name: username
+          required: true
           schema:
             $ref: '#/components/schemas/username'
           description: the username
@@ -228,11 +235,76 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/internal-server-error'
+  /payments:
+    get:
+      tags:
+        - payments
+      parameters:
+        - in: query
+          name: subscription_id
+          required: true
+          schema:
+            $ref: '#/components/schemas/uuid'
+          description: the subscription id
+      responses:
+        '200': 
+          description: successful operation
+          headers:
+            Access-Control-Allow-Origin:
+              description: 'Specifies the origins that are allowed to access the resource.'
+              schema:
+                $ref: '#/components/schemas/access-control-allow-origin'
+            Access-Control-Allow-Methods:
+              description: 'Specifies the methods allowed when accessing the resource.'
+              schema:
+                $ref: '#/components/schemas/access-control-allow-methods'
+            Access-Control-Allow-Headers:
+              description: 'Specifies the headers allowed when accessing the resource.'
+              schema:
+                $ref: '#/components/schemas/access-control-allow-headers'
+          content:
+            application/json:
+              schema:
+                type: array
+                items: 
+                  $ref: '#/components/schemas/SubscriptionPayment'
+        '404':
+          description: subscription not found
+          headers:
+            Access-Control-Allow-Origin:
+              description: 'Specifies the origins that are allowed to access the resource.'
+              schema:
+                $ref: '#/components/schemas/access-control-allow-origin'
+            Access-Control-Allow-Methods:
+              description: 'Specifies the methods allowed when accessing the resource.'
+              schema:
+                $ref: '#/components/schemas/access-control-allow-methods'
+            Access-Control-Allow-Headers:
+              description: 'Specifies the headers allowed when accessing the resource.'
+              schema:
+                $ref: '#/components/schemas/access-control-allow-headers'
+          content:
+            application/json:
+              schema:
+                type: string
+                default: "Not Found"
+        '500':
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: 
+                    type: string
+                    example: an internal server error has occurred
 components:
   schemas:
     Subscription:
       type: object
       properties:
+        username:
+          $ref: '#/components/schemas/username'
         uuid:
           $ref: '#/components/schemas/uuid'
         name:
@@ -247,12 +319,12 @@ components:
           $ref: '#/components/schemas/date'
         cost:
           $ref: '#/components/schemas/cost'
-        last_payment_date:
-          $ref: '#/components/schemas/date'
-        next_payment_date:
-          $ref: '#/components/schemas/date'
         icon:
           $ref: '#/components/schemas/icon'
+        last_payment_date:
+          $ref: '#/components/schemas/date'
+        category:
+          $ref: '#/components/schemas/category'
     SubscriptionInput:
       type: object
       properties:
@@ -266,9 +338,39 @@ components:
           $ref: '#/components/schemas/settings_url'
         plan:
           $ref: '#/components/schemas/plan'
+        start_date:
+          $ref: '#/components/schemas/date'
         cost:
           $ref: '#/components/schemas/cost'
+        category:
+          $ref: '#/components/schemas/category'
+    SubscriptionUpdate:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/name'
+        plan:
+          $ref: '#/components/schemas/plan'
         start_date:
+          $ref: '#/components/schemas/date'
+        cost:
+          $ref: '#/components/schemas/cost'
+        category:
+          $ref: '#/components/schemas/category'
+        last_payment_date:
+          $ref: '#/components/schemas/date'
+    SubscriptionPayment:
+      type: object
+      properties:
+        subscription_id:
+          $ref: '#/components/schemas/uuid'
+        uuid:
+          $ref: '#/components/schemas/uuid'
+        username:
+          $ref: '#/components/schemas/username'
+        amount:
+          $ref: '#/components/schemas/cost'
+        payment_date:
           $ref: '#/components/schemas/date'
     uuid:
       type: string
@@ -289,6 +391,9 @@ components:
       type: string
       enum: ['monthly', 'weekly', 'yearly', 'quarterly']
       example: 'monthly'
+    category:
+      type: string
+      enum: ['ott', 'music', 'gaming', 'delivery', 'fittness', 'education', 'magzine', 'software', 'finance', 'fashion', 'other']
     date:
       type: string
       example: 2024-04-30

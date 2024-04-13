@@ -48,6 +48,9 @@ func PaymentsHandler(ctx context.Context, request events.APIGatewayProxyRequest)
 			return events.APIGatewayProxyResponse{StatusCode: 400, Body: "Bad Request"}, nil
 		}
 		res, err := service.GetPayments(subscriptionId)
+		if len(res) == 0 {
+			return events.APIGatewayProxyResponse{StatusCode: 404, Body: "Not Found"}, nil
+		}
 		if err != nil {
 			return events.APIGatewayProxyResponse{StatusCode: 500, Body: "Internal Server Error"}, err
 		}
