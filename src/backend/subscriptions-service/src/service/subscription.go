@@ -38,6 +38,7 @@ func AddSubscription(item models.SubscriptionCreateInput) (models.SubscriptionDy
 		StartDate:       item.StartDate,
 		Icon:            "https://via.placeholder.com/150",
 		LastPaymentDate: item.StartDate,
+		Category:        item.Category,
 	}
 	log.Info().Str("SubscriptionId", uuid).Str("UserName", item.UserName).Str("Name", item.Name).Str("Url", item.Url).Msg("Adding subscription")
 	res, err := repository.AddSubscription(subNew)

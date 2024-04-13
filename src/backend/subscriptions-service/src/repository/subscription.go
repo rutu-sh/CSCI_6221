@@ -195,6 +195,7 @@ func UpdateSubscription(partitionKey string, sortKey string, updateItem models.S
 		Cost:            updateItem.Cost,
 		LastPaymentDate: updateItem.LastPaymentDate,
 		Icon:            subscription.Icon,
+		Category:        models.SubscriptionCategory(updateItem.Category),
 	}
 	tableInput := &dynamodb.UpdateItemInput{
 		TableName: aws.String(tableName),
@@ -222,15 +223,19 @@ func UpdateSubscription(partitionKey string, sortKey string, updateItem models.S
 			":last_payment_date": {
 				S: aws.String(updateItem.LastPaymentDate),
 			},
+			":category": {
+				S: aws.String(updateItem.Category),
+			},
 		},
 		ReturnValues:     aws.String("ALL_NEW"),
-		UpdateExpression: aws.String("SET #name = :name, #plan = :plan, #start_date = :start_date, #cost = :cost, #last_payment_date = :last_payment_date"),
+		UpdateExpression: aws.String("SET #name = :name, #plan = :plan, #start_date = :start_date, #cost = :cost, #last_payment_date = :last_payment_date, #category = :category"),
 		ExpressionAttributeNames: map[string]*string{
 			"#name":              aws.String("name"),
 			"#plan":              aws.String("plan"),
 			"#start_date":        aws.String("start_date"),
 			"#cost":              aws.String("cost"),
 			"#last_payment_date": aws.String("last_payment_date"),
+			"#category":          aws.String("category"),
 		},
 	}
 	_, err := dynamoClient.UpdateItem(tableInput)
