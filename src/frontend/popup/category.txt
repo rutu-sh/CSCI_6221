@@ -1,0 +1,83 @@
+    OTTs (Over-The-Top Services):
+        d
+
+    Streaming Music:
+        Spotify
+        Apple Music
+        Amazon Music Unlimited
+        Tidal
+        Deezer
+        Pandora
+        YouTube Music
+
+    Gaming:
+        Xbox Game Pass
+        PlayStation Plus
+        Nintendo Switch Online
+        EA Play
+        Ubisoft+
+        Apple Arcade
+        Google Stadia Pro
+
+    Delivery Apps:
+        DoorDash
+        Uber Eats
+        Grubhub
+        Postmates
+        Instacart
+        Deliveroo
+        Just Eat
+
+    Fitness & Wellness:
+        Peloton
+        Daily Burn
+        ClassPass
+        Headspace
+        Calm
+        MyFitnessPal
+        Fitbit Premium
+
+    Education & Learning:
+        Coursera
+        Udemy
+        Skillshare
+        LinkedIn Learning
+        MasterClass
+        Rosetta Stone
+        Duolingo Plus
+
+    Magazines & News:
+        New York Times
+        Wall Street Journal
+        The Economist
+        National Geographic
+        Time
+        Wired
+        Vogue
+
+    Software & Productivity:
+        Microsoft 365
+        Adobe Creative Cloud
+        Google Workspace
+        Dropbox
+        Evernote
+        Trello
+        Todoist
+
+    Finance & Money Management:
+        Mint
+        YNAB (You Need A Budget)
+        Acorns
+        Robinhood Gold
+        Morningstar Premium
+        Bloomberg Terminal
+        Stock Advisor
+
+    Fashion & Beauty:
+        Birchbox
+        Ipsy
+        FabFitFun
+        Stitch Fix
+        Sephora Play
+        BoxyCharm
+        Allure Beauty Box

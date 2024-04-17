@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscription Breakdown</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+    <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+    <header class="header">
+        <a href="popup.html">
+            <img class="header-logo" alt="logo" style="height: 40px; margin-left: 10px;" src="logo-dark.png">
+        </a>        
+        <div class="toggle-container">
+            <input type="checkbox" id="mode-toggle" class="toggle">
+            <label for="mode-toggle" class="slider"></label>
+        </div>
+    </header>
+
+    <canvas id="myChart" style="width:100%;max-width:800px"></canvas>
+
+    <script>
+        // Initialize empty arrays for xValues and yValues
+        var xValues = [];
+        var yValues = [];
+
+        // Get subscriptions from local storage
+        const subscriptions = localStorage.getItem('allSubscriptions');
+        if (subscriptions) {
+            // Parse subscription data
+            const parsedSubscriptions = JSON.parse(subscriptions);
+
+            // Loop through subscriptions to populate xValues and yValues
+            for (let i = 0; i < parsedSubscriptions.length; i++) {
+                const category = parsedSubscriptions[i].category;
+                const cost = parsedSubscriptions[i].cost;
+                if (xValues.includes(category)) {
+                    const index = xValues.indexOf(category);
+                    yValues[index] += cost;
+                } else {
+                    xValues.push(category);
+                    yValues.push(cost);
+                }
+            }
+        } else {
+            // If there are no subscriptions, use default values
+            xValues = ["OTT", "music", "gaming", "delivery", "fitness", "finance", "magazine", "education", "software", "fashion", "other"];
+            yValues = [55, 49, 44, 15, 14, 13, 12, 11, 10, 9, 56];
+        }
+
+        // Create the chart
+        var myChart = new Chart("myChart", {
+            type: "doughnut",
+            data: {
+                labels: xValues,
+                datasets: [{
+                    backgroundColor: ["#b91d47", "#00aba9", "#2b5797", "#e8c3b9", "#1e7145", "#f0a500", "#f472d0", "#f47214", "#f472o4", "#2262d4", "#b474d4", "#b47214"],
+                    data: yValues
+                }]
+            },
+            options: {
+                title: {
+                    display: true,
+                    text: "Breakdown of Subscriptions by Category",
+                    className: 'chart-title',
+                    fontColor: '#4CAF50',
+                    fontSize: 30,
+                    padding: 20,
+                    lineHeight: 1.5
+                },
+                legend: {
+                    display: true,
+                    position: 'right',
+                    labels: {
+                        fontColor: '#4CAF50',
+                        fontSize: 14
+                    }
+                }
+            }
+        });
+    </script>
+
+    <script src="popup.js"></script>
+</body>
+</html>

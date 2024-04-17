@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="popup.css">
+<title>Create New Subscription</title>
+</head>
+<body>
+
+<form id="subscription-form">
+    <label for="name">Name:</label><br>
+    <input type="text" id="name" name="name"><br>
+    
+    <label for="settings_url">Settings URL:</label><br>
+    <input type="text" id="settings_url" name="settings_url"><br>
+    
+    <label for="plan">Plan:</label><br>
+    <select id="plan" name="plan">
+        <option value="weekly">Weekly</option>
+        <option value="biweekly">Biweekly</option>
+        <option value="quaterly">Quaterly</option>
+        <option value="half-yearly">Half-Yearly</option>
+        <option value="yearly">Yearly</option>
+    </select><br>
+
+    
+    <label for="start_date">Start Date:</label><br>
+    <input type="date" id="start_date" name="start_date"><br>
+    
+    <label for="cost">Cost:</label><br>
+    <input type="number" id="cost" name="cost"><br>
+    
+    <label for="last_payment_date">Last Payment Date:</label><br>
+    <input type="date" id="last_payment_date" name="last_payment_date"><br>
+    
+    <label for="category">Category:</label><br>
+    <select id="category" name="category">
+        <option value="ott">OTT</option>
+        <option value="gaming">Gaming</option>
+        <option value="streaming">Streaming</option>
+        <option value="delivery">Delivery</option>
+    </select><br><br>
+    
+    <button type="submit">Submit</button>
+</form>
+
+<script>
+    // add username to the form data
+    username = sessionStorage.getItem("username");
+document.getElementById("subscription-form").addEventListener("submit", function(event) {
+    event.preventDefault();
+    const formData = new FormData(this);
+    const formDataJson = {};
+    formData.forEach((value, key) => {
+        formDataJson[key] = value;
+    });
+
+    // Add username to the JSON data
+    formDataJson['username'] = username;
+    
+    // Assuming you're using fetch API to send data to the API endpoint
+    fetch("https://7se83qeyid.execute-api.us-east-1.amazonaws.com/dev/v2/subscriptions", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(formDataJson)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("Failed to add subscription");
+        }
+        alert("Subscription added successfully!");
+        // Redirect to manage.html upon successful submission
+        window.location.href = "manage.html";
+    })
+    .catch(error => {
+        console.error("Error:", error);
+        alert("Failed to add subscription");
+    });
+});
+</script>
+
+<script src="popup.js"></script>
+
+</body>
+</html>

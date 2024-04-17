@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update subscription</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+    <header class="header">
+        <a href="popup.html">
+            <img class="header-logo" alt="logo" style="height: 40px; margin-left: 10px;" src="logo-dark.png">
+        </a>        
+        <div class="toggle-container">
+            <input type="checkbox" id="mode-toggle" class="toggle">
+            <label for="mode-toggle" class="slider"></label>
+        </div>
+    </header>
+    <!-- update subscription -->
+    <div class="container">
+        <h2 style="margin-top: 50px;">Update subscription</h2>
+        <form id="update-form" class="update-form">
+            <input type="text" id="update-name" class="update-name" placeholder="Update Name">
+            <input type="text" id="update-url" class="update-url" placeholder="Update URL">
+            <select id="update-plan" class="update-plan">
+                <option value="weekly">Weekly</option>
+                <option value="biweekly">Biweekly</option>
+                <option value="quaterly">Quaterly</option>
+                <option value="half-yearly">Half-Yearly</option>
+                <option value="yearly">Yearly</option>
+            </select>
+            <input type="date" id="update-start-date" class="update-start-date" placeholder="Update Start Date">
+            <input type="text" id="update-cost" class="update-cost" placeholder="Update Cost">
+            <input type="date" id="update-last-payment-date" class="update-last-payment-date" placeholder="Update Last Payment Date">
+            <select id="update-category" class="update-category">
+                <option value="ott">OTT</option>
+                <option value="gaming">Gaming</option>
+                <option value="streaming">Streaming</option>
+                <option value="delivery">Delivery</option>
+            </select>
+            <button type="submit" id="update" class="update-btn">Update</button>
+        </form>
+        
+        
+    </div>
+    <script src="popup.js"></script>
+    <script>
+// Get username from sessionStorage
+const username = sessionStorage.getItem('username');
+
+const subscriptions = localStorage.getItem('subscription');
+// parse the string to JSON
+const parsedSubscriptions = JSON.parse(subscriptions);
+
+const subscriptionId = parsedSubscriptions.subscriptionId;
+
+
+// prepopulate the form with the subscription details
+document.getElementById('update-name').value = parsedSubscriptions.name;
+document.getElementById('update-url').value = parsedSubscriptions.url;
+document.getElementById('update-plan').value = parsedSubscriptions.plan;
+document.getElementById('update-start-date').value = parsedSubscriptions.start_date;
+document.getElementById('update-cost').value = parsedSubscriptions.cost;
+document.getElementById('update-last-payment-date').value = parsedSubscriptions.last_payment_date;
+document.getElementById('update-category').value = parsedSubscriptions.category;
+
+
+// Function to update subscription
+async function updateSubscription() {
+    // Get updated values from the form
+    const name = document.getElementById('update-name').value;
+    const url = document.getElementById('update-url').value;
+    const cost = document.getElementById('update-cost').value;
+    const start_date = document.getElementById('update-start-date').value;
+    const plan = document.getElementById('update-plan').value;
+    const last_payment_date = document.getElementById('update-last-payment-date').value;
+    const category = document.getElementById('update-category').value;
+
+    // API endpoint
+    const apiUrl = `https://7se83qeyid.execute-api.us-east-1.amazonaws.com/dev/v2/subscriptions/${subscriptionId}?username=${username}`;
+
+    // Data to be sent in the request
+    // const data = {
+    //     name: name,
+    //     url: url,
+    //     cost: amount,
+    //     start_date: date
+    // };
+    // cost should not be a float
+
+    const data = {
+    name: name,
+    plan: plan,
+    start_date: start_date,
+    cost: parseFloat(cost),
+    last_payment_date: last_payment_date,
+    category: category
+    }
+
+//     const data = {
+//   "name": "test-subscription-name",
+//   "plan": "monthly",
+//   "start_date": "2024-04-30",
+//   "cost": 122.04,
+//   "last_payment_date": "2024-04-30",
+//   "category": "ott"
+//     };
+
+    try {
+        const response = await fetch(apiUrl, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to update subscription');
+        }
+
+        // Subscription updated successfully
+        console.log('Subscription updated successfully');
+        window.location.href = 'manage.html'; // Redirect to manage.html
+    } catch (error) {
+        console.error('Error updating subscription:', error.message);
+    }
+}
+
+// Event listener for form submission
+document.getElementById('update-form').addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent default form submission
+    updateSubscription(); // Call function to update subscription
+});
+
+
+    </script>
+</body>
+</html>

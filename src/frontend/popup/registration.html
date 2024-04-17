@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subhub</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+
+<body>
+    <header class="header">
+        <a href="popup.html">
+            <img class="header-logo" alt="logo" style="height: 40px; margin-left: 10px;" src="logo-dark.png">
+        </a>
+        <div class="toggle-container">
+            <input type="checkbox" id="mode-toggle" class="toggle">
+            <label for="mode-toggle" class="slider"></label>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Registration form -->
+        <div class="register-container">
+            <form id="registration-form" class="register-form">
+                <!-- Your form inputs here -->
+                <input type="text" id="username" placeholder="Username">
+                <input type="text" id="name" placeholder="Full Name">
+                <input type="email" id="email" placeholder="Email">
+                <input type="password" id="password" placeholder="Password" autocomplete="new-password">
+                <input type="password" id="confirm-password" placeholder="Confirm Password" autocomplete="new-password">
+
+
+                <!-- Subscription checkboxes -->
+                <h3 style="text-align: center;">Please Select Up to 6 subscriptions you want to start with</h3>
+                <div class="multi-select-container">
+                    <div class="multi-select-item">
+                        <input type="checkbox" id="item1" class="multi-select-checkbox" hidden>
+                        <label for="item1" class="multi-select-label">
+                            <img src="./logos/netflix.png" alt="Netflix" class="item-image">
+                            Netflix
+                            <img src="https://cdn-icons-png.freepik.com/256/13051/13051751.png" alt="Netflix" class="item-image">
+                        </label>
+                    </div>
+                    <div class="multi-select-item">
+                        <input type="checkbox" id="item2" class="multi-select-checkbox" hidden>
+                        <label for="item2" class="multi-select-label">
+                            <img src="./logos/hulu.png" alt="Hulu" class="item-image">
+                            Hulu
+                            <img src="https://cdn-icons-png.freepik.com/256/13051/13051751.png" alt="Netflix" class="item-image">
+                        </label>
+                    </div>
+                    <div class="multi-select-item">
+                        <input type="checkbox" id="item3" class="multi-select-checkbox" hidden>
+                        <label for="item3" class="multi-select-label">
+                            <img src="./logos/hbo.png" alt="HBO Max" class="item-image">
+                            HBO
+                            <img src="https://cdn-icons-png.freepik.com/256/13051/13051751.png" alt="Netflix" class="item-image">
+                        </label>
+                    </div>
+                    <div class="multi-select-item">
+                        <input type="checkbox" id="item4" class="multi-select-checkbox" hidden>
+                        <label for="item4" class="multi-select-label">
+                            <img src="./logos/instacart.png" alt="Instacart" class="item-image">
+                            Instacart
+                            <img src="https://cdn-icons-png.freepik.com/256/13051/13051751.png" alt="Netflix" class="item-image">
+                        </label>
+                    </div>
+                    <div class="multi-select-item">
+                        <input type="checkbox" id="item5" class="multi-select-checkbox" hidden>
+                        <label for="item5" class="multi-select-label">
+                            <img src="./logos/f1tv.png" alt="F1 TV" class="item-image">
+                            F1 TV
+                            <img src="https://cdn-icons-png.freepik.com/256/13051/13051751.png" alt="Netflix" class="item-image">
+                        </label>
+                    </div>
+                </div>
+                <!-- Add more - 2 -->
+                <div class="multi-select-container">
+                    <div class="multi-select-item">
+                        <input type="checkbox" id="item6" class="multi-select-checkbox" hidden>
+                        <label for="item6" class="multi-select-label">
+                            <img src="./logos/peacock.png" alt="Netflix" class="item-image">
+                            Peacock
+                            <img src="https://cdn-icons-png.freepik.com/256/13051/13051751.png" alt="Netflix" class="item-image">
+                        </label>
+                    </div>
+                    <div class="multi-select-item">
+                        <input type="checkbox" id="item7" class="multi-select-checkbox" hidden>
+                        <label for="item7" class="multi-select-label">
+                            <img src="./logos/xbox.png" alt="Hulu" class="item-image">
+                            Xbox
+                            <img src="https://cdn-icons-png.freepik.com/256/13051/13051751.png" alt="Netflix" class="item-image">
+                        </label>
+                    </div>
+                    <div class="multi-select-item">
+                        <input type="checkbox" id="item8" class="multi-select-checkbox" hidden>
+                        <label for="item8" class="multi-select-label">
+                            <img src="./logos/duolingo.png" alt="HBO Max" class="item-image">
+                            Duolingo
+                            <img src="https://cdn-icons-png.freepik.com/256/13051/13051751.png" alt="Netflix" class="item-image">
+                        </label>
+                    </div>
+                    <div class="multi-select-item">
+                        <input type="checkbox" id="item9" class="multi-select-checkbox" hidden>
+                        <label for="item9" class="multi-select-label">
+                            <img src="./logos/spotify.png" alt="Instacart" class="item-image">
+                            Spotify
+                            <img src="https://cdn-icons-png.freepik.com/256/13051/13051751.png" alt="Netflix" class="item-image">
+                        </label>
+                    </div>
+                    <div class="multi-select-item">
+                        <input type="checkbox" id="item10" class="multi-select-checkbox" hidden>
+                        <label for="item10" class="multi-select-label">
+                            <img src="./logos/coursera.png" alt="F1 TV" class="item-image">
+                            Coursera
+                            <img src="https://cdn-icons-png.freepik.com/256/13051/13051751.png" alt="Netflix" class="item-image">
+                        </label>
+                    </div>
+                </div>
+                <!-- Add more - 3 -->
+                <div class="multi-select-container">
+                    <div class="multi-select-item">
+                        <input type="checkbox" id="item11" class="multi-select-checkbox" hidden>
+                        <label for="item11" class="multi-select-label">
+                            <img src="./logos/wsj.png" alt="Netflix" class="item-image">
+                            WSJ
+                            <img src="https://cdn-icons-png.freepik.com/256/13051/13051751.png" alt="Netflix" class="item-image">
+                        </label>
+                    </div>
+                    <div class="multi-select-item">
+                        <input type="checkbox" id="item12" class="multi-select-checkbox" hidden>
+                        <label for="item12" class="multi-select-label">
+                            <img src="./logos/wired.png" alt="Hulu" class="item-image">
+                            Wired
+                            <img src="https://cdn-icons-png.freepik.com/256/13051/13051751.png" alt="Netflix" class="item-image">
+                        </label>
+                    </div>
+                    <div class="multi-select-item">
+                        <input type="checkbox" id="item13" class="multi-select-checkbox" hidden>
+                        <label for="item13" class="multi-select-label">
+                            <img src="./logos/adobe.png" alt="HBO Max" class="item-image">
+                            Adobe
+                            <img src="https://cdn-icons-png.freepik.com/256/13051/13051751.png" alt="Netflix" class="item-image">
+                        </label>
+                    </div>
+                    <div class="multi-select-item">
+                        <input type="checkbox" id="item14" class="multi-select-checkbox" hidden>
+                        <label for="item14" class="multi-select-label">
+                            <img src="./logos/microsoft.png" alt="Instacart" class="item-image">
+                            Microsoft
+                            <img src="https://cdn-icons-png.freepik.com/256/13051/13051751.png" alt="Netflix" class="item-image">
+                        </label>
+                    </div>
+                    <div class="multi-select-item">
+                        <input type="checkbox" id="item15" class="multi-select-checkbox" hidden>
+                        <label for="item15" class="multi-select-label">
+                            <img src="./logos/vogue.png" alt="F1 TV" class="item-image">
+                            Vogue
+                            <img src="https://cdn-icons-png.freepik.com/256/13051/13051751.png" alt="Netflix" class="item-image">
+                        </label>
+                    </div>
+                </div>
+                <!-- Add more - 4 -->
+                <div class="multi-select-container">
+                    <div class="multi-select-item">
+                        <input type="checkbox" id="item16" class="multi-select-checkbox" hidden>
+                        <label for="item16" class="multi-select-label">
+                            <img src="./logos/sephora.png" alt="Netflix" class="item-image">
+                            Sephora
+                            <img src="https://cdn-icons-png.freepik.com/256/13051/13051751.png" alt="Netflix" class="item-image">
+                        </label>
+                    </div>
+                    <div class="multi-select-item">
+                        <input type="checkbox" id="item17" class="multi-select-checkbox" hidden>
+                        <label for="item17" class="multi-select-label">
+                            <img src="./logos/mint.png" alt="Hulu" class="item-image">
+                            Mint
+                            <img src="https://cdn-icons-png.freepik.com/256/13051/13051751.png" alt="Netflix" class="item-image">
+                        </label>
+                    </div>
+                    <div class="multi-select-item">
+                        <input type="checkbox" id="item18" class="multi-select-checkbox" hidden>
+                        <label for="item18" class="multi-select-label">
+                            <img src="./logos/fitbit.png" alt="HBO Max" class="item-image">
+                            FitBit
+                            <img src="https://cdn-icons-png.freepik.com/256/13051/13051751.png" alt="Netflix" class="item-image">
+                        </label>
+                    </div>
+                    <div class="multi-select-item">
+                        <input type="checkbox" id="item19" class="multi-select-checkbox" hidden>
+                        <label for="item19" class="multi-select-label">
+                            <img src="./logos/headspace.png" alt="Instacart" class="item-image">
+                            Headspace
+                            <img src="https://cdn-icons-png.freepik.com/256/13051/13051751.png" alt="Netflix" class="item-image">
+                        </label>
+                    </div>
+                    <div class="multi-select-item">
+                        <input type="checkbox" id="item20" class="multi-select-checkbox" hidden>
+                        <label for="item20" class="multi-select-label">
+                            <img src="./logos/linkedin.webp" alt="F1 TV" class="item-image">
+                            LinkedIn
+                            <img src="https://cdn-icons-png.freepik.com/256/13051/13051751.png" alt="Netflix" class="item-image">
+                        </label>
+                    </div>
+                </div> 
+                </div>
+                <button type="submit" class="reg-btn">Register</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="popup.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const checkboxes = document.querySelectorAll('.multi-select-checkbox');
+            const selectedSubscriptions = []; // Array to track selected subscriptions
+
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('click', function () {
+                    const checkedCount = document.querySelectorAll('.multi-select-checkbox:checked').length;
+                    if (checkedCount > 6) {
+                        this.checked = false;
+                        alert('You can only select up to 6 subscriptions.');
+                    } else {
+                        // Add or remove subscription from the array based on checkbox status
+                        if (this.checked) {
+                            selectedSubscriptions.push(this.id);
+                        } else {
+                            const index = selectedSubscriptions.indexOf(this.id);
+                            if (index !== -1) {
+                                selectedSubscriptions.splice(index, 1);
+                            }
+                        }
+                    }
+                });
+            });
+
+            // Function to submit the form with selected subscriptions
+            const registrationForm = document.getElementById("registration-form");
+            registrationForm.addEventListener("submit", function (event) {
+                event.preventDefault();
+                // Add code to submit the form with selectedSubscriptions array
+                console.log("Selected Subscriptions:", selectedSubscriptions);
+                // Proceed with form submission
+            });
+        });
+    </script>
+</body>
+
+</html>

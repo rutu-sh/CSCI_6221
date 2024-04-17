@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enter OTP</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+
+<body>
+    <header class="header">
+        <a href="popup.html">
+            <img class="header-logo" alt="logo" style="height: 40px; margin-left: 10px;" src="logo-dark.png">
+        </a>
+
+        <div class="toggle-container">
+            <input type="checkbox" id="mode-toggle" class="toggle">
+            <label for="mode-toggle" class="slider"></label>
+        </div>
+    </header>
+    <div class="container">
+        <form id="otp-form">
+            <h2 style="margin-top: 50px;">Enter OTP</h2>
+            <div id="otp" class="otp">
+                <input type="text" maxlength="1" id="digit1">
+                <input type="text" maxlength="1" id="digit2">
+                <input type="text" maxlength="1" id="digit3">
+                <input type="text" maxlength="1" id="digit4">
+                <input type="text" maxlength="1" id="digit5">
+                <input type="text" maxlength="1" id="digit6">
+            </div>
+            <button type="submit" id="submit-verify-otp" class="submit-otp">Submit</button>
+            <p id="resend-otp" class="resend-otp">Resend OTP</p>
+        </form>
+    </div>
+    <script src="popup.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log('DOM loaded with JavaScript');
+            // Add event listener to form submission
+            document.getElementById('otp-form').addEventListener('submit', function (event) {
+                // Prevent the default form submission
+                event.preventDefault();
+
+                // Get username and OTP values from input fields
+                const username = sessionStorage.getItem("username");
+                console.log("Username:", username);
+                if (!username) {
+                    console.error("Username not found in sessionStorage.");
+                    alert("Username not found.");
+                    return;
+                }
+
+                var otpValue = document.getElementById('digit1').value +
+                    document.getElementById('digit2').value +
+                    document.getElementById('digit3').value +
+                    document.getElementById('digit4').value +
+                    document.getElementById('digit5').value +
+                    document.getElementById('digit6').value;
+
+
+                // Create the request body
+                var requestBody = {
+                    "username": username,
+                    "confCode": otpValue
+                };
+
+                // Define the API endpoint
+                var apiUrl = 'https://fw79wa9t2e.execute-api.us-east-1.amazonaws.com/dev/auth-confirm-signup';
+
+                // Define options for the fetch request
+                var options = {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestBody)
+                };
+
+                // Make the POST request
+                fetch(apiUrl, options)
+                    .then(function (response) {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(function (data) {
+                        // Handle successful response
+                        console.log('Response:', data);
+                        // Redirect to login page upon successful submission
+                        window.location.href = "manage.html";
+                    })
+                    .catch(function (error) {
+                        // Handle errors
+                        console.error('There was a problem with the fetch operation:', error);
+                    });
+            });
+
+            // Add event listeners to input boxes
+            var otpInputs = document.querySelectorAll('#otp input');
+            otpInputs.forEach(function (input, index) {
+                input.addEventListener('input', function () {
+                    // Move focus to the next input box if available
+                    if (input.value.length === 1 && index < otpInputs.length - 1) {
+                        otpInputs[index + 1].focus();
+                    }
+                });
+            });
+        });
+    </script>
+
+</body>
+
+</html>

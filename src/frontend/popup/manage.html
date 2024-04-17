@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>subhub - manage subscriptions</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+<header class="header" style="height: 20px;">
+    <a href="popup.html">
+        <img class="header-logo" alt="logo" style="height: 40px; margin-left: 10px;" src="logo-dark.png">
+    </a>    
+    <a href="./chart.html" style="text-decoration: none; color: white;"><p style="margin-left: -50px; cursor: pointer;">view your spends</p></a>
+    <div class="toggle-container">
+        <input type="checkbox" id="mode-toggle" class="toggle">
+        <label for="mode-toggle" class="slider"></label>
+    </div>
+</header>
+<body>
+    <div class="container">
+        <p class="welcome-user">Welcome, <span id="loggedInUser"></span>!</p> <!-- This line displays the username -->
+        <h2 style="margin-top: 20px;" id="subscriptions-heading">Manage subscriptions</h2>
+        <div id="subscriptions" class="subscription-container"></div>
+        <div id="no-cards" style="font-size: 24px; margin-top: 20px;"></div>
+    </div>
+    <div class="align-btn">
+        <a href="create-new-sub.html">
+            <button id="add-subscription" class="add-subscription">Add Subscription</button>
+        </a>
+    </div>
+    
+
+    <script>
+        // Retrieve the username from sessionStorage
+        const username = sessionStorage.getItem('username');
+
+        // Check if username exists and is not null
+        if (username) {
+            // If username exists, update the content of the span element with id 'loggedInUser'
+            const loggedInUserSpan = document.getElementById('loggedInUser');
+            if (loggedInUserSpan) {
+                loggedInUserSpan.textContent = username;
+            } else {
+                console.error("Element with id 'loggedInUser' not found.");
+            }
+        } else {
+            // If username doesn't exist in sessionStorage, handle the case accordingly
+            console.error("Username not found in sessionStorage.");
+        }
+    </script>
+
+    <script src="popup.js"></script>
+</body>
+</html>
