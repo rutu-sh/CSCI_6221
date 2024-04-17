@@ -19,7 +19,7 @@ func getCORSHeaders() map[string]string {
 	*/
 	return map[string]string{
 		"Access-Control-Allow-Origin":      "*",
-		"Access-Control-Allow-Methods":     "GET, POST, PUT, OPTIONS, DELETE",
+		"Access-Control-Allow-Methods":     "GET, POST, PATCH, OPTIONS, DELETE",
 		"Access-Control-Allow-Headers":     "Content-Type, Authorization",
 		"Access-Control-Allow-Credentials": "true",
 	}
@@ -63,25 +63,31 @@ func getHandlerFunc(path string) (HandlerFunc, error) {
 	return nil, nil
 }
 
-func pathHandler(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	log.Info().Str("path", request.Path).Msg("Received request")
-	handler, err := getHandlerFunc(request.Path)
+func callHandler(hfunc HandlerFunc, ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+	response, err := hfunc(ctx, request)
+	if err != nil {
+		return events.APIGatewayProxyResponse{StatusCode: 500, Body: "Internal Server Error"}, err
+	}
+
 	headers := getCORSHeaders()
-	if err != nil {
-		return events.APIGatewayProxyResponse{StatusCode: 500, Body: "Internal Server Error", Headers: headers}, err
-	}
-	if handler == nil {
-		return events.APIGatewayProxyResponse{StatusCode: 404, Body: "Not Found", Headers: headers}, nil
-	}
-	response, err := handler(ctx, request)
-	if err != nil {
-		return events.APIGatewayProxyResponse{StatusCode: 500, Body: "Internal Server Error", Headers: headers}, err
-	}
+
 	return events.APIGatewayProxyResponse{
 		StatusCode: response.StatusCode,
 		Body:       response.Body,
 		Headers:    headers,
 	}, nil
+}
+
+func pathHandler(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+	log.Info().Str("path", request.Path).Msg("Received request")
+	handler, err := getHandlerFunc(request.Path)
+	if handler == nil {
+		return events.APIGatewayProxyResponse{StatusCode: 404, Body: "Not Found"}, nil
+	}
+	if err != nil {
+		return events.APIGatewayProxyResponse{StatusCode: 500, Body: "Internal Server Error"}, err
+	}
+	return callHandler(handler, ctx, request)
 }
 
 func main() {

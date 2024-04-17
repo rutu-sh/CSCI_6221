@@ -71,68 +71,58 @@ type HandlerFunc func(context.Context, events.APIGatewayProxyRequest) (events.AP
 The function `getHandlerFunc` takes the request path as a parameter and returns the appropriate handler function to be used. 
 
 ```go
-func getHandlerFunc(path string) (HandlerFunc, error){
-    subscriptionRegex, err := regexp.Compile(`^\/subscriptions$`)
+func getHandlerFunc(path string) (HandlerFunc, error) {
+	subscriptionsRegex, err := regexp.Compile(`^\/v2\/subscriptions$`)
 	if err != nil {
 		return nil, err
 	}
-	subscriptionIDRegex, err := regexp.Compile(`^\/subscriptions\/([0-9a-zA-Z-]+)\/user\/([0-9a-zA-Z-]+)$`)
+	if subscriptionsRegex.MatchString(path) {
+		return handlers.SubscriptionsHandler, nil
+	}
+
+	subscriptionByIdRegex, err := regexp.Compile(`^\/v2\/subscriptions\/[a-zA-Z0-9-]+$`)
 	if err != nil {
 		return nil, err
 	}
-	subscriptionListRegex, err := regexp.Compile(`^\/subscriptions\/list\/([0-9a-zA-Z-]+)$`)
+	if subscriptionByIdRegex.MatchString(path) {
+		return handlers.SubscriptionByIDHandler, nil
+	}
+
+	paymentsRegex, err := regexp.Compile(`^\/v2\/payments$`)
 	if err != nil {
 		return nil, err
 	}
-	updateSubscriptionIDRegex, err := regexp.Compile(`^\/subscriptions\/update\/([0-9a-zA-Z-]+)$`)
+	if paymentsRegex.MatchString(path) {
+		return handlers.PaymentsHandler, nil
+	}
+
+	paymentByIdRegex, err := regexp.Compile(`^\/v2\/payments\/[a-zA-Z0-9-]+$`)
 	if err != nil {
 		return nil, err
 	}
-	switch true {
-	case subscriptionListRegex.MatchString(path) || subscriptionRegex.MatchString(path):
-		return handlers.HandlerSubscription, nil
-	case subscriptionIDRegex.MatchString(path):
-		return handlers.HandlerSubscriptionID, nil
-	case updateSubscriptionIDRegex.MatchString(path):
-		return handlers.HandlerUpdate, nil
-	default:
-		return nil, errors.New("no handler found")
+	if paymentByIdRegex.MatchString(path) {
+		return handlers.PaymentByIDHandler, nil
 	}
+
+	return nil, nil
 }
 ```
 
 The function returned by `getHandlerFunc` is then used to handle the request. A **higher-order** function `callHandler` is passed the appropriate handler function, the context, and the request. This function calls the handler function, gets the response, and adds the necessary headers. 
 
 ```go
- func callHandler(hfunc HandlerFunc, ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	/*
-		Handles the routing of the specific API call to the respective function.
-		Also, handles the response and error handling for the API calls.
-		Params: hfunc A function of type HandlerFunc which is the handler function to be called.
-				ctx context.Context
-				request
-		Returns: events.APIGatewayProxyResponse
-				 error
-	*/
+func callHandler(hfunc HandlerFunc, ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	response, err := hfunc(ctx, request)
 	if err != nil {
 		return events.APIGatewayProxyResponse{StatusCode: 500, Body: "Internal Server Error"}, err
 	}
 
-	responseJSON, err := json.Marshal(response.Body)
-	if err != nil {
-		return events.APIGatewayProxyResponse{StatusCode: 500, Body: "Internal Server Error"}, err
-	}
+	headers := getCORSHeaders()
 
 	return events.APIGatewayProxyResponse{
 		StatusCode: response.StatusCode,
-		Body:       string(responseJSON),
-		Headers: map[string]string{
-			"Access-Control-Allow-Origin":      "*",
-			"Access-Control-Allow-Methods":     "GET, POST, OPTIONS, DELETE",
-			"Access-Control-Allow-Headers":     "Content-Type, Authorization",
-			"Access-Control-Allow-Credentials": "true",
-		},
+		Body:       response.Body,
+		Headers:    headers,
 	}, nil
 }
 ```
