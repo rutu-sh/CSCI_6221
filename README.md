@@ -38,6 +38,7 @@ We have used AWS Cognito for authentication. The flow is as follows:
 
 ![Authentication](./assets/golang-auth-flow.drawio.png)
 
+
 The main component of this flow is the Authentication Lambda function. This function is responsible for validating the user credentials with AWS Cognito and generating a JWT token. This function is written in **Go**. It uses the `github.com/aws/aws-lambda-go/lambda` package to handle the request and response. It uses the `github.com/aws/aws-sdk-go` package to interact with AWS Cognito.
 
 The source code for this function can be found in the [src/backend/auth](/src/backend/auth). 
@@ -54,9 +55,9 @@ We have used AWS Lambda and DynamoDB for managing the subscriptions. The flow is
 
 ![Subscription Management](./assets/subscription-management-flow.drawio.png)
 
-The main component of this flow is the Subscription Management Lambda function. This function is responsible for interacting with DynamoDB to perform CRUD operations on the subscriptions. This function is written in **Go**. It uses the `github.com/aws/aws-lambda-go/lambda` package to handle the request and response. It uses the `github.com/aws/aws-sdk-go` package to interact with DynamoDB.
+The main component of this flow is the Subscription Management Lambda function. This function is responsible for interacting with DynamoDB to perform CRUD operations on the subscriptions and their payments. This function is written in **Go**. It uses the `github.com/aws/aws-lambda-go/lambda` package to handle the request and response. It uses the `github.com/aws/aws-sdk-go` package to interact with DynamoDB.
 
-The source code for this function can be found in the [src/backend/service](/src/backend/service).
+The source code for this function can be found in the [src/backend/subscriptions-service](src/backend/subscriptions-service), with api spec specified in [docs/spec/openapi_spec.yaml](/docs/spec/openapi_spec.yaml)
 
 **CRUD Operations using Higher-Order-Functions (Functional Programming)**
 
