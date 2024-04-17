@@ -9,7 +9,7 @@
 
 
 
-# SubHub - A Subscription Management Platform
+# SubScape - A Subscription Management Platform
 
 ## Idea
 
